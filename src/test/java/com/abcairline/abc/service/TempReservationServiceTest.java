@@ -21,13 +21,32 @@ class TempReservationServiceTest {
     ReservationRepository reservationRepository;
 
     @Test
-    void testEqualsMap() throws JsonProcessingException {
-        Map<String, String> setMap = new HashMap<>();
-        setMap.put("test", "test1");
-        tempReservationService.setValue(1L, 1L, setMap);
-        Map<String, String> getMap = tempReservationService.getValue("1", "1");
+    void testTemporalSave() throws JsonProcessingException {
+        Map<String, String> map = new HashMap<>();
+        map.put("reservationPrice", "10000");
 
-        Assertions.assertEquals(setMap, getMap);
+        tempReservationService.setValue(2L, 2L, map);
+
+        Map<String, String> getValueMap = tempReservationService.getValue(1L, 1L);
+        Assertions.assertEquals(10000, Integer.parseInt(getValueMap.get("reservationPrice")));
+    }
+
+    @Test
+    void testUpdateTemporalSave() throws JsonProcessingException {
+        Map<String, String> map = new HashMap<>();
+        map.put("reservationPrice", "10000");
+        tempReservationService.setValue(2L, 2L, map);
+
+        Map<String, String> getValueMap = tempReservationService.getValue(2L, 2L);
+        Assertions.assertEquals(10000, Integer.parseInt(getValueMap.get("reservationPrice")));
+        Assertions.assertNull(getValueMap.get("seatNumber"));
+
+        map.put("reservationPrice", "20000");
+        map.put("seatNumber", "A1");
+        tempReservationService.setValue(2L, 2L, map);
+        getValueMap = tempReservationService.getValue(2L, 2L);
+        Assertions.assertEquals(20000, Integer.parseInt(getValueMap.get("reservationPrice")));
+        Assertions.assertEquals("A1", getValueMap.get("seatNumber"));
     }
 
     @Test

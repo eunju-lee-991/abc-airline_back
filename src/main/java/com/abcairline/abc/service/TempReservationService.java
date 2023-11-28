@@ -11,7 +11,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,6 +22,7 @@ import java.util.Map;
 public class TempReservationService {
     // Redis Template
     private final RedisTemplate<String, String> redisTemplate;
+    private final ReservationService reservationService;
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final FlightRepository flightRepository;
@@ -37,14 +37,13 @@ public class TempReservationService {
     }
 
     // 값 조회
-    public Map<String, String> getValue(String userId, String flightId) throws JsonProcessingException {
+    public Map<String, String> getValue(Long userId, Long flightId) throws JsonProcessingException {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
-        String value = (String) hashOperations.get(userId, flightId);
+        String value = (String) hashOperations.get(String.valueOf(userId), String.valueOf(flightId));
         return objectMapper.readValue(value, new TypeReference<>() {});
     }
 
     // 예약을 영구 저장
-    @Transactional
     public Long save(Long userId, Long flightId, ReservationStatus reservationStatus) throws JsonProcessingException {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
         String value = (String) hashOperations.get(String.valueOf(userId), String.valueOf(flightId));
@@ -54,7 +53,7 @@ public class TempReservationService {
         Reservation reservation = Reservation.createReservation(userRepository.findOne(userId), flightRepository.findOne(flightId), ancillaryService,
                 Integer.parseInt(map.get("reservationPrice")), map.get("seatNumber"), reservationStatus);
 
-        reservationRepository.save(reservation);
+        reservationService.createReservation(reservation);
 
         return reservation.getId();
     }
