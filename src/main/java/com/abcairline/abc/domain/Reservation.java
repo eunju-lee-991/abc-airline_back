@@ -3,6 +3,7 @@ package com.abcairline.abc.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.cors.reactive.PreFlightRequestWebFilter;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -22,6 +23,9 @@ public class Reservation {
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
+    @Embedded
+    private AncillaryService ancillaryService;
+
     private int reservationPrice;
 
     private String seatNumber;
@@ -29,5 +33,16 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
-    // 부가서비스
+    public static Reservation createReservation(User user, Flight flight, AncillaryService ancillaryService, int reservationPrice
+            , String seatNumber, ReservationStatus status) {
+        Reservation reservation = new Reservation();
+        reservation.setUser(user);
+        reservation.setFlight(flight);
+        reservation.setAncillaryService(ancillaryService);
+        reservation.setReservationPrice(reservationPrice);
+        reservation.setSeatNumber(seatNumber);
+        reservation.setStatus(status);
+
+        return reservation;
+    }
 }
