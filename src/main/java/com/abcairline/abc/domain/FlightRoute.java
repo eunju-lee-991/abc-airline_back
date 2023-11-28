@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter @Setter
 public class FlightRoute {
@@ -12,10 +14,12 @@ public class FlightRoute {
     @GeneratedValue
     @Column(name = "route_id")
     private Long id;
-    @ManyToOne
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "departure_code")
     private Airport departure;
-    @ManyToOne
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "arrival_code")
     private Airport arrival;
 }
