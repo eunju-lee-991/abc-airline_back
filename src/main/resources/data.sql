@@ -4,30 +4,28 @@ INSERT INTO user(user_id, social_login_yn, email, sign_up_date, last_access_date
 VALUES (2, 0, 'efg@gmail.com',current_date, current_date);
 
 
-INSERT INTO airport(IATACode, name, country, continents, city)
+INSERT INTO airport(IATACode, name, country, continent, city)
 VALUES ('ICN', 'Incheon International Airport', 'Korea', 'Asia', 'Seoul/Incheon');
-INSERT INTO airport(IATACode, name, country, continents, city)
+INSERT INTO airport(IATACode, name, country, continent, city)
 VALUES ('GMP', 'Gimpo International Airport', 'Korea', 'Asia', 'Seoul/Gimpo');
-INSERT INTO airport(IATACode, name, country, continents, city)
+INSERT INTO airport(IATACode, name, country, continent, city)
 VALUES ('PUS', 'Gimhae International Airport', 'Korea', 'Asia', 'Busan');
-INSERT INTO airport(IATACode, name, country, continents, city)
+INSERT INTO airport(IATACode, name, country, continent, city)
 VALUES ('ADL', 'Adelaide International Airport', 'Australia', 'Oceania', 'Adelaide');
-INSERT INTO airport(IATACode, name, country, continents, city)
+INSERT INTO airport(IATACode, name, country, continent, city)
 VALUES ('BNE', 'Brisbane International Airport', 'Australia', 'Oceania', 'Brisbane');
-INSERT INTO airport(IATACode, name, country, continents, city)
+INSERT INTO airport(IATACode, name, country, continent, city)
 VALUES ('NRT', 'Narita Airport', 'Japan', 'Asia', 'Tokyo');
-INSERT INTO airport(IATACode, name, country, continents, city)
+INSERT INTO airport(IATACode, name, country, continent, city)
 VALUES ('FUK', 'Fukuoka Airport', 'Japan', 'Asia', 'Fukuoka');
-INSERT INTO airport(IATACode, name, country, continents, city)
-VALUES ('DMK', 'Don Mueang International', 'Asia', 'Thailand', 'Bangkok');
-INSERT INTO airport(IATACode, name, country, continents, city)
-VALUES ('CNX', 'Chiang Mai International Airport', 'Asia', 'Thailand', 'Chiang Mai');
+INSERT INTO airport(IATACode, name, country, continent, city)
+VALUES ('DMK', 'Don Mueang International', 'Thailand', 'Asia', 'Bangkok');
+INSERT INTO airport(IATACode, name, country, continent, city)
+VALUES ('CNX', 'Chiang Mai International Airport', 'Thailand', 'Asia', 'Chiang Mai');
 
 
 INSERT INTO  flight_route(route_id, departure_code, arrival_code)
 VALUES (1, 'ICN', 'ADL');
-INSERT INTO  flight_route(route_id, departure_code, arrival_code)
-VALUES (10, 'ADL', 'ICN');
 INSERT INTO  flight_route(route_id, departure_code, arrival_code)
 VALUES (2, 'ICN', 'BNE');
 INSERT INTO  flight_route(route_id, departure_code, arrival_code)
@@ -44,6 +42,16 @@ INSERT INTO  flight_route(route_id, departure_code, arrival_code)
 VALUES (8, 'ICN', 'FUK');
 INSERT INTO  flight_route(route_id, departure_code, arrival_code)
 VALUES (9, 'FUK', 'ICN');
+INSERT INTO  flight_route(route_id, departure_code, arrival_code)
+VALUES (10, 'ICN', 'CNX');
+INSERT INTO  flight_route(route_id, departure_code, arrival_code)
+VALUES (11, 'CNX', 'ICN');
+INSERT INTO  flight_route(route_id, departure_code, arrival_code)
+VALUES (12, 'GMP', 'DMK');
+INSERT INTO  flight_route(route_id, departure_code, arrival_code)
+VALUES (13, 'DMK', 'GMP');
+INSERT INTO  flight_route(route_id, departure_code, arrival_code)
+VALUES (14, 'BNE', 'GMP');
 
 
 INSERT INTO  airplane(model, manufacturer, series, total_seat)

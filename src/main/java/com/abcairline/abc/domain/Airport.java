@@ -13,7 +13,7 @@ public class Airport {
     @Id
     private String IATACode;
     private String name;
-    private String continents;	
+    private String continent;
     private String country;
     private String city;
     private String imageUrl;
