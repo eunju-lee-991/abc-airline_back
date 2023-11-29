@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.cors.reactive.PreFlightRequestWebFilter;
 
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
@@ -28,21 +29,34 @@ public class Reservation {
 
     private int reservationPrice;
 
-    private String seatNumber;
+    @OneToOne
+    @JoinColumn(name = "seat_id")
+    private Seat seat;
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
     public static Reservation createReservation(User user, Flight flight, AncillaryService ancillaryService, int reservationPrice
-            , String seatNumber, ReservationStatus status) {
+            , Seat seat, ReservationStatus status) {
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setFlight(flight);
         reservation.setAncillaryService(ancillaryService);
         reservation.setReservationPrice(reservationPrice);
-        reservation.setSeatNumber(seatNumber);
+        seat.reserveSeat();
+        reservation.setSeat(seat);
         reservation.setStatus(status);
 
         return reservation;
+    }
+
+    public void updateAncillaryService(AncillaryService ancillaryService) {
+        this.ancillaryService = ancillaryService;
+    }
+
+    public void updateSeat(Seat seat){
+        this.seat.cancelSeat();
+        seat.reserveSeat();
+        this.seat = seat;
     }
 }

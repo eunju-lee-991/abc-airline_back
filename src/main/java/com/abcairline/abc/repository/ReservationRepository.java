@@ -24,4 +24,12 @@ public class ReservationRepository {
     public List<Reservation> findAll() {
         return em.createQuery("select r from Reservation r", Reservation.class).getResultList();
     }
+
+    public List<Reservation> findAllForUser(Long userId) {
+        return em.createQuery(
+                        "SELECT r FROM Reservation r WHERE r.user.id = :userId", Reservation.class)
+                .setParameter("userId", userId)
+                .getResultList();
+
+    }
 }

@@ -32,7 +32,4 @@ public class Flight {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "airplane_model")
     private Airplane airplane;
-
-    @OneToMany(mappedBy = "flight")
-    private List<Seat> seats;
 }

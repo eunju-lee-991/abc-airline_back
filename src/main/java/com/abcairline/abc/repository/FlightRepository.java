@@ -1,6 +1,7 @@
 package com.abcairline.abc.repository;
 
 import com.abcairline.abc.domain.Flight;
+import com.abcairline.abc.domain.Seat;
 import com.abcairline.abc.domain.User;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,11 @@ public class FlightRepository {
     }
 
     public List<Flight> findAll() {
-        return em.createQuery("select f from Flight f", Flight.class).getResultList();
+        return em.createQuery("select f from Flight f", Flight.class)
+                .getResultList();
     }
 
+    public Seat findSeat(Long seatId)  {
+        return em.find(Seat.class, seatId);
+    }
 }

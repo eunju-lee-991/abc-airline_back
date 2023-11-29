@@ -96,44 +96,51 @@ INSERT INTO  flight (flight_id, route_id, airplane_model, flight_number, departu
 VALUES (12, 5, 'A220', 'AA351', '2023-12-18 15:00:00.000000', '2023-12-18 17:00:00.000000', 300000);
 
 
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (1, 1, 'A1', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (2, 1, 'A2', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (3, 1, 'A3', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (4, 1, 'A4', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (5, 1, 'A5', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (6, 1, 'A6', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (7, 1, 'B1', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (8, 1, 'B2', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (9, 1, 'B3', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (10, 1, 'B4', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (11, 1, 'B5', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (12, 1, 'B6', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (13, 1, 'C1', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (14, 1, 'C2', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (15, 1, 'C3', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (16, 1, 'C4', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (17, 1, 'C5', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (18, 1, 'C6', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (1, 1, 'A1', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (2, 1, 'A2', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (3, 1, 'A3', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (4, 1, 'A4', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (5, 1, 'A5', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (6, 1, 'A6', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (7, 1, 'B1', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (8, 1, 'B2', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (9, 1, 'B3', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (10, 1, 'B4', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (11, 1, 'B5', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (12, 1, 'B6', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (13, 1, 'C1', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (14, 1, 'C2', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (15, 1, 'C3', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (16, 1, 'C4', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (17, 1, 'C5', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (18, 1, 'C6', 1);
 
 
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (19, 11, 'A1', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (20, 11, 'A2', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (21, 11, 'A3', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (22, 11, 'A4', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (23, 11, 'A5', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (24, 11, 'A6', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (25, 11, 'B1', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (26, 11, 'B2', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (27, 11, 'B3', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (28, 11, 'B4', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (29, 11, 'B5', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (30, 11, 'B6', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (31, 11, 'C1', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (32, 11, 'C2', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (33, 11, 'C3', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (34, 11, 'C4', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (35, 11, 'C5', 1);
-INSERT INTO seat (id, flight_id, seat_number, is_available) VALUES (36, 11, 'C6', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (19, 11, 'A1', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (20, 11, 'A2', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (21, 11, 'A3', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (22, 11, 'A4', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (23, 11, 'A5', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (24, 11, 'A6', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (25, 11, 'B1', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (26, 11, 'B2', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (27, 11, 'B3', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (28, 11, 'B4', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (29, 11, 'B5', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (30, 11, 'B6', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (31, 11, 'C1', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (32, 11, 'C2', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (33, 11, 'C3', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (34, 11, 'C4', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (35, 11, 'C5', 1);
+INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (36, 11, 'C6', 1);
 
-INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_number, status)
-VALUES (10000, 1, 11, 250000, 'A1', 'CONFIRMED');
+INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
+VALUES (10000, 1, 11, 250000, 19, 'CONFIRMED');
+INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
+VALUES (10001, 1, 1, 350000, 5, 'PENDING');
+
+-- INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
+-- VALUES (10002, 2, 1, 350000, 17, 'PENDING');
+-- INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
+-- VALUES (10002, 2, 1, 410000, 18, 'PENDING');

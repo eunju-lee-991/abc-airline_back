@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @SpringBootTest
 class TempReservationServiceTest {
@@ -35,18 +36,18 @@ class TempReservationServiceTest {
     void testUpdateTemporalSave() throws JsonProcessingException {
         Map<String, String> map = new HashMap<>();
         map.put("reservationPrice", "10000");
-        tempReservationService.setValue(2L, 2L, map);
+        tempReservationService.setValue(2L, 11L, map);
 
-        Map<String, String> getValueMap = tempReservationService.getValue(2L, 2L);
+        Map<String, String> getValueMap = tempReservationService.getValue(2L, 11L);
         Assertions.assertEquals(10000, Integer.parseInt(getValueMap.get("reservationPrice")));
-        Assertions.assertNull(getValueMap.get("seatNumber"));
+        Assertions.assertNull(getValueMap.get("seatId"));
 
         map.put("reservationPrice", "20000");
-        map.put("seatNumber", "A1");
-        tempReservationService.setValue(2L, 2L, map);
-        getValueMap = tempReservationService.getValue(2L, 2L);
+        map.put("seatId", "19");
+        tempReservationService.setValue(2L, 11L, map);
+        getValueMap = tempReservationService.getValue(2L, 11L);
         Assertions.assertEquals(20000, Integer.parseInt(getValueMap.get("reservationPrice")));
-        Assertions.assertEquals("A1", getValueMap.get("seatNumber"));
+        Assertions.assertEquals("19", getValueMap.get("seatId"));
     }
 
     @Test
@@ -56,7 +57,7 @@ class TempReservationServiceTest {
         map.put("inflightMeal", "chicken");
         map.put("luggage", "15kg");
         map.put("reservationPrice", "15000");
-        map.put("seatNumber", "C1");
+        map.put("seatId", "10");
 
         tempReservationService.setValue(1L, 1L, map);
 
@@ -66,8 +67,56 @@ class TempReservationServiceTest {
 
         Assertions.assertEquals("15kg", findOne.getAncillaryService().getLuggage());
         Assertions.assertEquals(15000, findOne.getReservationPrice());
-        Assertions.assertEquals("C1", findOne.getSeatNumber());
+        Assertions.assertEquals("B4", findOne.getSeat().getSeatNumber());
         Assertions.assertEquals("abc@naver.com", findOne.getUser().getEmail());
         Assertions.assertEquals("AA703", findOne.getFlight().getFlightNumber());
+    }
+
+    @Test
+    void testGetTempReservationsForUser() throws JsonProcessingException {
+        Map<String, String> map = new HashMap<>();
+        map.put("reservationPrice", "9900");
+        tempReservationService.setValue(2L, 1L, map);
+
+        map.put("reservationPrice", "1900");
+        tempReservationService.setValue(2L, 1L, map);
+
+        Set<Long> tempReservations = tempReservationService.getTempReservation(2L);
+        tempReservations.stream().forEach(l -> {
+            try {
+                System.out.println(l + " <========");
+                System.out.println(tempReservationService.getValue(2L, l).get("reservationPrice"));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+    }
+
+    @Test
+    void testDeleteTempReservation() throws JsonProcessingException {
+        tempReservationService.deleteTempReservation(2L, 1L);
+        Assertions.assertNull(tempReservationService.getValue(2L, 1L));
+    }
+
+    @Test
+    void testDeleteTempDataAfterCreation() throws JsonProcessingException {
+        Map<String, String> map = new HashMap<>();
+        map.put("reservationPrice", "9900");
+        map.put("inflightMeal", "fish");
+        map.put("luggage", "25kg");
+        map.put("wifi", "10GB");
+        map.put("seatId", "2");
+
+        tempReservationService.setValue(2L, 1L, map);
+        Long saved = tempReservationService.save(2L, 1L, ReservationStatus.PENDING);
+        Reservation reservation = reservationRepository.findOne(saved);
+
+        org.assertj.core.api.Assertions.assertThat(reservation.getSeat().isAvailable()).isEqualTo(false);
+        org.assertj.core.api.Assertions.assertThat(reservation.getReservationPrice()).isEqualTo(9900);
+
+        org.assertj.core.api.Assertions.assertThat(tempReservationService.getValue(2L, 1L))
+                .isNull();
+
     }
 }
