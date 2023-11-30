@@ -1,8 +1,6 @@
 package com.abcairline.abc.service;
 
-import com.abcairline.abc.domain.Airport;
-import com.abcairline.abc.domain.Flight;
-import com.abcairline.abc.domain.FlightRoute;
+import com.abcairline.abc.domain.*;
 import com.abcairline.abc.repository.FlightRepository;
 import com.abcairline.abc.repository.FlightRouteRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +31,17 @@ public class FlightService {
     public List<Flight> retrieveFlightsByRoute(String departureCode, String arrivalCode, LocalDateTime searchDate) {
         List<Flight> flightsByRoute = flightRepository.findFlightsByRoute(departureCode, arrivalCode, searchDate);
         return flightsByRoute;
+    }
+
+    public List<Seat> retrieveAllSeatsForFlight(Long flightId) {
+        List<Seat> allSeats = flightRepository.findAllSeats(flightId);
+        if (allSeats == null) {
+            throw new RuntimeException("something is wrong!!");
+        }
+        return allSeats;
+    }
+
+    public List<Airplane> retrieveAllAirplanes() {
+        return flightRepository.findAllAirplanes();
     }
 }

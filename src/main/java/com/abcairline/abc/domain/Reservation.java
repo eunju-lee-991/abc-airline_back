@@ -1,11 +1,10 @@
 package com.abcairline.abc.domain;
 
+import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.cors.reactive.PreFlightRequestWebFilter;
 
-import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity

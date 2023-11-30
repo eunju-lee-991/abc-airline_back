@@ -1,6 +1,7 @@
 package com.abcairline.abc.repository;
 
 import com.abcairline.abc.domain.User;
+import com.abcairline.abc.dto.user.UserInfoDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -23,4 +24,5 @@ public class UserRepository {
     public List<User> findAll() {
         return em.createQuery("select u from User u", User.class).getResultList();
     }
+
 }

@@ -1,9 +1,6 @@
 package com.abcairline.abc.repository;
 
-import com.abcairline.abc.domain.Airport;
-import com.abcairline.abc.domain.Flight;
-import com.abcairline.abc.domain.Seat;
-import com.abcairline.abc.domain.User;
+import com.abcairline.abc.domain.*;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -34,7 +31,7 @@ public class FlightRepository {
         LocalDateTime endDate = searchDate.plusDays(3).toLocalDate().atStartOfDay().minusSeconds(1);
 
         return em.createQuery("select f from Flight f where f.route.departure.id = :departureCode " +
-                        "and f.route.arrival.id = :arrivalCode AND f.departureDate BETWEEN :startDate AND :endDate", Flight.class)
+                        "and f.route.arrival.id = :arrivalCode AND f.departureDate BETWEEN :startDate AND :endDate order by f.departureDate", Flight.class)
                 .setParameter("departureCode", departureCode)
                 .setParameter("arrivalCode", arrivalCode)
                 .setParameter("startDate", startDate)
@@ -50,5 +47,10 @@ public class FlightRepository {
 
     public Seat findSeat(Long seatId)  {
         return em.find(Seat.class, seatId);
+    }
+
+    public List<Airplane> findAllAirplanes() {
+        return em.createQuery("select ap from Airplane ap order by model", Airplane.class)
+                .getResultList();
     }
 }

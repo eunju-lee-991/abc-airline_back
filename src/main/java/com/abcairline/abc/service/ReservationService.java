@@ -2,7 +2,7 @@ package com.abcairline.abc.service;
 
 import com.abcairline.abc.domain.AncillaryService;
 import com.abcairline.abc.domain.Reservation;
-import com.abcairline.abc.domain.ReservationStatus;
+import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import com.abcairline.abc.domain.Seat;
 import com.abcairline.abc.exception.InvalidReservationStateException;
 import com.abcairline.abc.repository.FlightRepository;
@@ -37,6 +37,11 @@ public class ReservationService {
         return reservationRepository.findOne(id);
     }
 
+    // 단건 예약 detail 조회
+    public Reservation retrieveReservationWithAllInformation(Long id) {
+        return reservationRepository.findOneWithAllInformation(id);
+    }
+
     // 전체 예약 조회
     public List<Reservation> retrieveAllReservations() {
         return reservationRepository.findAll();
@@ -47,10 +52,16 @@ public class ReservationService {
         return reservationRepository.findAllForUser(userId);
     }
 
+    // 회원 예약 건수 조회
+    public Integer countAllReservationsForUser(Long userId, ReservationStatus status) {
+        return reservationRepository.countAllReservationsForUser(userId, status);
+    }
+
     @Transactional
     // 예약 수정 (결제 대기 상태에서 기내식/좌석만 변경 가능)
     public void updateReservation(Long reservationId, AncillaryService ancillaryService, Long seatId) {
         Reservation findOne = reservationRepository.findOne(reservationId);
+
         if(findOne.getStatus() == ReservationStatus.PENDING){
             findOne.updateAncillaryService(ancillaryService);
             Seat seat = flightRepository.findSeat(seatId);

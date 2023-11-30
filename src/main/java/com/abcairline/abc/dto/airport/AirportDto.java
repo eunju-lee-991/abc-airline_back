@@ -1,9 +1,7 @@
-package com.abcairline.abc.dto;
+package com.abcairline.abc.dto.airport;
 
 import com.abcairline.abc.domain.Airport;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class AirportDto {

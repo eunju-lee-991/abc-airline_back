@@ -1,6 +1,8 @@
 package com.abcairline.abc.service;
 
 import com.abcairline.abc.domain.*;
+import com.abcairline.abc.domain.enumeration.InFlightMeal;
+import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import com.abcairline.abc.exception.InvalidReservationStateException;
 import com.abcairline.abc.repository.FlightRepository;
 import com.abcairline.abc.repository.UserRepository;
@@ -14,7 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -35,7 +39,11 @@ class ReservationServiceTest {
         User user = userRepository.findOne(2L);
         Flight flight = flightRepository.findOne(11L);
         Seat seat = flightRepository.findSeat(21L);
-        AncillaryService ancillaryService = new AncillaryService("beef", "10kg", "10GB");
+        Map<String, String> map = new HashMap<>();
+        map.put("inFlightMeal", "fish");
+        map.put("luggage", "FIFTEEN_KG");
+        map.put("wifi", "FIVE_GB");
+        AncillaryService ancillaryService = AncillaryService.createAncillaryService(map);
         Reservation reservation = Reservation.createReservation(user, flight, ancillaryService, 50000, seat, ReservationStatus.CONFIRMED);
         reservationService.createReservation(reservation);
         Long saved = reservation.getId();
@@ -76,17 +84,28 @@ class ReservationServiceTest {
         reservation1.setId(10000L);
         reservation1.setSeat(flightRepository.findSeat(25L)); // 원래 A1
 
+        Map<String, String> map = new HashMap<>();
+        map.put("inFlightMeal", "NONE");
+        map.put("luggage", "NONE");
+        map.put("wifi", "NONE");
+
+//        AncillaryService ancillaryService = AncillaryService.createAncillaryService(map);
+
         // it should throw exception
-        Assertions.assertThatThrownBy(() -> reservationService.updateReservation(10000L, new AncillaryService("","",""), 11L)).isInstanceOf(InvalidReservationStateException.class);
+        Assertions.assertThatThrownBy(() -> reservationService.updateReservation(10000L, AncillaryService.createAncillaryService(map), 11L)).isInstanceOf(InvalidReservationStateException.class);
 
         // 10001L PENDING
         Reservation reservation2 = new Reservation();
         reservation2.setId(10001L);
-        AncillaryService ancillaryService = new AncillaryService("pork", "20kg", "5GB");
+
+        Map<String, String> serviceMap = new HashMap<>();
+
+        serviceMap.put("wifi", "NONE");
+        AncillaryService ancillaryService = AncillaryService.createAncillaryService(serviceMap);
 
         reservationService.updateReservation(10001L, ancillaryService, 10L);
         Reservation find = reservationService.retrieveReservation(10001L);
-        Assertions.assertThat(find.getAncillaryService().getInflightMeal()).isEqualTo("pork");
+        Assertions.assertThat(find.getAncillaryService().getInFlightMeal()).isEqualTo(InFlightMeal.NONE);
         Assertions.assertThat(find.getSeat().getSeatNumber()).isEqualTo("B4");
         Assertions.assertThat(find.getReservationPrice()).isEqualTo(350000); // 결제 금액은 변하면 안됨
         Assertions.assertThat(flightRepository.findSeat(10L).isAvailable()).isEqualTo(false);

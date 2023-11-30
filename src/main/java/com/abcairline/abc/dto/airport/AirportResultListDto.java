@@ -1,4 +1,4 @@
-package com.abcairline.abc.dto;
+package com.abcairline.abc.dto.airport;
 
 import lombok.Data;
 

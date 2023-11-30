@@ -1,12 +1,11 @@
 package com.abcairline.abc.service;
 
 import com.abcairline.abc.domain.Reservation;
-import com.abcairline.abc.domain.ReservationStatus;
+import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import com.abcairline.abc.repository.ReservationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,7 +54,7 @@ class TempReservationServiceTest {
     @Transactional
     void testReservation() throws JsonProcessingException {
         Map<String, String> map = new HashMap<>();
-        map.put("inflightMeal", "chicken");
+        map.put("inFlightMeal", "chicken");
         map.put("luggage", "15kg");
         map.put("reservationPrice", "15000");
         map.put("seatId", "10");
@@ -83,6 +82,7 @@ class TempReservationServiceTest {
         tempReservationService.setValue(2L, 1L, map);
 
         Set<Long> tempReservations = tempReservationService.getTempReservation(2L);
+
         tempReservations.stream().forEach(l -> {
             try {
                 System.out.println(l + " <========");
@@ -92,6 +92,8 @@ class TempReservationServiceTest {
             }
         });
 
+        Set<Long> result = tempReservationService.getTempReservation(25L);
+        Assertions.assertNull(result);
     }
 
     @Test
@@ -104,7 +106,7 @@ class TempReservationServiceTest {
     void testDeleteTempDataAfterCreation() throws JsonProcessingException {
         Map<String, String> map = new HashMap<>();
         map.put("reservationPrice", "9900");
-        map.put("inflightMeal", "fish");
+        map.put("inFlightMeal", "fish");
         map.put("luggage", "25kg");
         map.put("wifi", "10GB");
         map.put("seatId", "2");
@@ -122,7 +124,7 @@ class TempReservationServiceTest {
     }
 
     @Test
-    void testGetAllKeys() throws JsonProcessingException {
+    void testFlushAll() throws JsonProcessingException {
         Map<String, String> map = new HashMap<>();
         map.put("dummy", "dummy");
         tempReservationService.setValue(1L, 1L, map);

@@ -1,4 +1,4 @@
-package com.abcairline.abc.dto;
+package com.abcairline.abc.dto.flight;
 
 import lombok.Data;
 

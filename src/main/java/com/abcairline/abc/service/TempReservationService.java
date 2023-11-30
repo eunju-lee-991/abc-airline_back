@@ -2,7 +2,7 @@ package com.abcairline.abc.service;
 
 import com.abcairline.abc.domain.AncillaryService;
 import com.abcairline.abc.domain.Reservation;
-import com.abcairline.abc.domain.ReservationStatus;
+import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import com.abcairline.abc.domain.Seat;
 import com.abcairline.abc.repository.FlightRepository;
 import com.abcairline.abc.repository.ReservationRepository;
@@ -55,11 +55,10 @@ public class TempReservationService {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
         Map<Object, Object> entries = hashOperations.entries(String.valueOf(userId));
 
-        return entries == null ? null :
-                hashOperations.entries(String.valueOf(userId)).keySet().stream()
-                .map(Object::toString)
-                .map(Long::parseLong)
-                .collect(Collectors.toSet());
+        return entries.isEmpty() ? null : entries.keySet().stream()
+        .map(Object::toString)
+        .map(Long::parseLong)
+        .collect(Collectors.toSet());
     }
 
     //
@@ -76,11 +75,16 @@ public class TempReservationService {
 
         String value = (String) hashOperations.get(String.valueOf(userId), String.valueOf(flightId));
         Map<String, String> map = objectMapper.readValue(value, new TypeReference<>() {});
-        AncillaryService ancillaryService = new AncillaryService(map.get("inflightMeal"), map.get("luggage"), map.get("wifi"));
+        AncillaryService ancillaryService = AncillaryService.createAncillaryService(map);
         Seat seat = flightRepository.findSeat(Long.parseLong(map.get("seatId")));
         seat.reserveSeat();
+
+        int flightPrice = flightRepository.findOne(flightId).getPrice();
+        int discount = map.get("discount") == null ? 0 : Integer.parseInt(map.get("discount"));
+        int reservationPrice = flightPrice - discount;
+
         Reservation reservation = Reservation.createReservation(userRepository.findOne(userId), flightRepository.findOne(flightId), ancillaryService,
-                Integer.parseInt(map.get("reservationPrice")), seat, reservationStatus);
+                reservationPrice, seat, reservationStatus);
 
         reservationService.createReservation(reservation);
         deleteTempReservation(userId, flightId);
