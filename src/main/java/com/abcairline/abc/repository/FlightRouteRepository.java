@@ -24,6 +24,28 @@ public class FlightRouteRepository {
                 .getResultList();
     }
 
+    public List<Airport> findAllDepartures() {
+        return em.createQuery("SELECT DISTINCT fr.departure from FlightRoute fr order by fr.departure.city", Airport.class)
+                .getResultList();
+    }
+
+    public List<Airport> findAllArrivals() {
+        return em.createQuery("SELECT DISTINCT fr.arrival from FlightRoute fr order by fr.arrival.city ", Airport.class)
+                .getResultList();
+    }
+
+    public List<Airport> findDepartureByArrival(String arrivalCode) {
+        return em.createQuery("SELECT fr.departure FROM FlightRoute fr WHERE fr.arrival.id = :arrivalCode order by fr.departure.city", Airport.class)
+                .setParameter("arrivalCode", arrivalCode)
+                .getResultList();
+    }
+
+    public List<Airport> findArrivalByDeparture(String departureCode) {
+        return em.createQuery("SELECT fr.arrival FROM FlightRoute fr WHERE fr.departure.id = :departureCode order by fr.arrival.city", Airport.class)
+                .setParameter("departureCode", departureCode)
+                .getResultList();
+    }
+
     public List<Airport> findDepartureByContinent(String continent) {
         return em.createQuery("SELECT DISTINCT fr.departure FROM FlightRoute fr WHERE fr.departure.continent = :continent", Airport.class)
                 .setParameter("continent", continent)

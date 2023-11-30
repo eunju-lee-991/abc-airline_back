@@ -30,11 +30,15 @@ public class FlightRepository {
     }
 
     public List<Flight> findFlightsByRoute(String departureCode, String arrivalCode, LocalDateTime searchDate) {
+        LocalDateTime startDate = searchDate.minusDays(2).toLocalDate().atStartOfDay();
+        LocalDateTime endDate = searchDate.plusDays(3).toLocalDate().atStartOfDay().minusSeconds(1);
+
         return em.createQuery("select f from Flight f where f.route.departure.id = :departureCode " +
-                        "and f.route.arrival.id = :arrivalCode", Flight.class)
+                        "and f.route.arrival.id = :arrivalCode AND f.departureDate BETWEEN :startDate AND :endDate", Flight.class)
                 .setParameter("departureCode", departureCode)
                 .setParameter("arrivalCode", arrivalCode)
-                // 나중에 날짜 추가
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
                 .getResultList();
     }
 

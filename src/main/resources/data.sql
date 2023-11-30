@@ -74,7 +74,7 @@ VALUES ('A220', 'AIRBUS', '300', 140);
 
 
 INSERT INTO  flight (flight_id, route_id, airplane_model, flight_number, departure_date, arrival_date, price)
-VALUES (1, 1, 'A220', 'AA703', '2023-12-12 00:00:00.000000', '2023-12-12 02:00:00.000000', 300000);
+VALUES (1, 1, 'A220', 'AA703', '2023-12-12 13:00:00.000000', '2023-12-12 15:00:00.000000', 300000);
 INSERT INTO  flight (flight_id, route_id, airplane_model, flight_number, departure_date, arrival_date, price)
 VALUES (2, 1, 'A220', 'AA771', '2023-12-12 08:00:00.000000', '2023-12-12 10:00:00.000000', 300000);
 
@@ -91,7 +91,7 @@ VALUES (6, 3, 'A220', 'AA781', '2023-12-15 12:00:00.000000', '2023-12-15 14:00:0
 INSERT INTO  flight (flight_id, route_id, airplane_model, flight_number, departure_date, arrival_date, price)
 VALUES (7, 4, 'A220', 'AA331', '2023-12-15 10:00:00.000000', '2023-12-15 12:00:00.000000', 200000);
 INSERT INTO  flight (flight_id, route_id, airplane_model, flight_number, departure_date, arrival_date, price)
-VALUES (8, 4, 'A220', 'AA337', '2023-12-16 10:00:00.000000', '2023-12-16 12:00:00.000000', 250000);
+VALUES (8, 4, 'A220', 'AA331', '2023-12-16 10:00:00.000000', '2023-12-16 12:00:00.000000', 250000);
 
 INSERT INTO  flight (flight_id, route_id, airplane_model, flight_number, departure_date, arrival_date, price)
 VALUES (9, 6, 'B787', 'AA931', '2023-12-12 10:00:00.000000', '2023-12-12 12:00:00.000000', 270000);
@@ -101,7 +101,7 @@ VALUES (10, 7, 'B777', 'AA391', '2023-12-15 14:00:00.000000', '2023-12-15 16:00:
 INSERT INTO  flight (flight_id, route_id, airplane_model, flight_number, departure_date, arrival_date, price)
 VALUES (11, 5, 'A220', 'AA331', '2023-12-17 15:00:00.000000', '2023-12-17 17:00:00.000000', 350000);
 INSERT INTO  flight (flight_id, route_id, airplane_model, flight_number, departure_date, arrival_date, price)
-VALUES (12, 5, 'A220', 'AA351', '2023-12-18 15:00:00.000000', '2023-12-18 17:00:00.000000', 300000);
+VALUES (12, 5, 'A220', 'AA331', '2023-12-18 15:00:00.000000', '2023-12-18 17:00:00.000000', 300000);
 
 
 INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (1, 1, 'A1', 1);

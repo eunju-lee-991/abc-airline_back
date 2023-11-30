@@ -2,6 +2,7 @@ package com.abcairline.abc.repository;
 
 import com.abcairline.abc.domain.Airport;
 import com.abcairline.abc.domain.FlightRoute;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,5 +38,21 @@ class FlightRouteRepositoryTest {
             System.out.println(a.getIATACode());
             System.out.println(a.getName());
         });
+    }
+
+    @Test
+    void testFindDepartureByArrival() {
+        List<Airport> airports = flightRouteRepository.findDepartureByArrival("ADL"); // only ICN
+        Assertions.assertThat(airports.size()).isEqualTo(1);
+        Assertions.assertThat(airports.get(0).getIATACode()).isEqualTo("ICN");
+
+    }
+
+    @Test
+    void testFindArrivalByDeparture() {
+        List<Airport> airports = flightRouteRepository.findArrivalByDeparture("DMK"); // only ICN
+        Assertions.assertThat(airports.size()).isEqualTo(1);
+        Assertions.assertThat(airports.get(0).getIATACode()).isEqualTo("GMP");
+
     }
 }
