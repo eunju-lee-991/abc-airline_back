@@ -120,4 +120,16 @@ class TempReservationServiceTest {
                 .isNull();
 
     }
+
+    @Test
+    void testGetAllKeys() throws JsonProcessingException {
+        Map<String, String> map = new HashMap<>();
+        map.put("dummy", "dummy");
+        tempReservationService.setValue(1L, 1L, map);
+        tempReservationService.setValue(2L, 2L, map);
+        tempReservationService.flushAll();
+
+        Assertions.assertNull(tempReservationService.getValue(1L, 1L));
+        Assertions.assertNull(tempReservationService.getValue(2L, 2L));
+    }
 }

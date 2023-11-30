@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,8 +35,11 @@ public class TempReservationService {
     public void setValue(Long userId, Long flightId, Map<String, String> map) throws JsonProcessingException {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
 
-        String value = objectMapper.writeValueAsString(map);
-        hashOperations.put(String.valueOf(userId), String.valueOf(flightId), value);
+        if (map != null) {
+            String value = objectMapper.writeValueAsString(map);
+            hashOperations.put(String.valueOf(userId), String.valueOf(flightId), value);
+            redisTemplate.expire(String.valueOf(userId), 3600, TimeUnit.SECONDS); // 1시간 유효기간
+        }
     }
 
     // 값 조회
@@ -49,8 +53,10 @@ public class TempReservationService {
     // userId에 들어있는 fligt 조회
     public Set<Long> getTempReservation(Long userId){
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+        Map<Object, Object> entries = hashOperations.entries(String.valueOf(userId));
 
-        return hashOperations.entries(String.valueOf(userId)).keySet().stream()
+        return entries == null ? null :
+                hashOperations.entries(String.valueOf(userId)).keySet().stream()
                 .map(Object::toString)
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());
@@ -82,4 +88,10 @@ public class TempReservationService {
         return reservation.getId();
     }
 
+    public void flushAll() {
+        Set<String> keys = redisTemplate.keys("*[0-9]*");
+        keys.forEach(k -> System.out.println(k));
+
+        redisTemplate.delete(keys);
+    }
 }
