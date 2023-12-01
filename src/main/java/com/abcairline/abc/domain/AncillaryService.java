@@ -27,14 +27,10 @@ public class AncillaryService {
     @Enumerated(EnumType.STRING)
     private WifiCapacity wifi;
 
-    public static AncillaryService createAncillaryService(Map<String, String> map) {
-        String meal = map.get("inFlightMeal");
-        String lug = map.get("luggage");
-        String wf = map.get("wifi");
-
-        InFlightMeal inflightMeal = StringUtils.hasText(meal) ? InFlightMeal.valueOf(meal) : InFlightMeal.NONE;
-        LuggageWeight luggage = StringUtils.hasText(lug) ? LuggageWeight.valueOf(lug) : LuggageWeight.NONE;
-        WifiCapacity wifi = StringUtils.hasText(wf) ? WifiCapacity.valueOf(wf) : WifiCapacity.NONE;
+    public static AncillaryService createAncillaryService(String inFlightMealStr, String luggageStr, String wifiStr) {
+        InFlightMeal inflightMeal = StringUtils.hasText(inFlightMealStr) ? InFlightMeal.valueOf(inFlightMealStr) : InFlightMeal.NONE;
+        LuggageWeight luggage = StringUtils.hasText(luggageStr) ? LuggageWeight.valueOf(luggageStr) : LuggageWeight.NONE;
+        WifiCapacity wifi = StringUtils.hasText(wifiStr) ? WifiCapacity.valueOf(wifiStr) : WifiCapacity.NONE;
 
         return new AncillaryService(inflightMeal, luggage, wifi);
     }

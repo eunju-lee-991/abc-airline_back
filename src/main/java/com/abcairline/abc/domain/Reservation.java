@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
@@ -32,22 +34,10 @@ public class Reservation {
     @JoinColumn(name = "seat_id")
     private Seat seat;
 
+    private LocalDateTime reservationDate;
+
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
-
-    public static Reservation createReservation(User user, Flight flight, AncillaryService ancillaryService, int reservationPrice
-            , Seat seat, ReservationStatus status) {
-        Reservation reservation = new Reservation();
-        reservation.setUser(user);
-        reservation.setFlight(flight);
-        reservation.setAncillaryService(ancillaryService);
-        reservation.setReservationPrice(reservationPrice);
-        seat.reserveSeat();
-        reservation.setSeat(seat);
-        reservation.setStatus(status);
-
-        return reservation;
-    }
 
     public void updateAncillaryService(AncillaryService ancillaryService) {
         this.ancillaryService = ancillaryService;
