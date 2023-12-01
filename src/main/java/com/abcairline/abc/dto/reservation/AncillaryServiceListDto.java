@@ -15,15 +15,9 @@ public class AncillaryServiceDto {
     private Map<String, String> inFlightMeal;
     private Map<String, String> luggage;
     private Map<String, String> wifi;
-    private TempReservationDto tempData;
 
     public AncillaryServiceDto() {
         setServices();
-    }
-
-    public AncillaryServiceDto(TempReservationDto tempData) {
-        setServices();
-        this.tempData = tempData;
     }
 
     private void setServices() {

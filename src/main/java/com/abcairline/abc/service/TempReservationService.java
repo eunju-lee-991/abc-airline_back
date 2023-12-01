@@ -1,9 +1,5 @@
 package com.abcairline.abc.service;
 
-import com.abcairline.abc.domain.AncillaryService;
-import com.abcairline.abc.domain.Reservation;
-import com.abcairline.abc.domain.enumeration.ReservationStatus;
-import com.abcairline.abc.domain.Seat;
 import com.abcairline.abc.repository.FlightRepository;
 import com.abcairline.abc.repository.ReservationRepository;
 import com.abcairline.abc.repository.UserRepository;
@@ -15,6 +11,8 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -25,10 +23,6 @@ import java.util.stream.Collectors;
 public class TempReservationService {
     // Redis Template
     private final RedisTemplate<String, String> redisTemplate;
-    private final ReservationService reservationService;
-    private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
-    private final FlightRepository flightRepository;
     private final ObjectMapper objectMapper;
 
     // 값 저장
@@ -51,14 +45,15 @@ public class TempReservationService {
     }
 
     // userId에 들어있는 fligt 조회
-    public Set<Long> getTempReservation(Long userId){
+    public List<Long> getTempReservation(Long userId) {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
-        Map<Object, Object> entries = hashOperations.entries(String.valueOf(userId));
+        Map<Object, Object> entries = userId != null ? hashOperations.entries(String.valueOf(userId))
+                : new HashMap<>();
 
         return entries.isEmpty() ? null : entries.keySet().stream()
-        .map(Object::toString)
-        .map(Long::parseLong)
-        .collect(Collectors.toSet());
+                .map(Object::toString)
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
     }
 
     //
@@ -69,31 +64,9 @@ public class TempReservationService {
         System.out.println("deleted ====> " + delete);
     }
 
-    // 예약을 영구 저장
-    public Long save(Long userId, Long flightId, ReservationStatus reservationStatus) throws JsonProcessingException {
-        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
-
-        String value = (String) hashOperations.get(String.valueOf(userId), String.valueOf(flightId));
-        Map<String, String> map = objectMapper.readValue(value, new TypeReference<>() {});
-        AncillaryService ancillaryService = AncillaryService.createAncillaryService(map);
-        Seat seat = flightRepository.findSeat(Long.parseLong(map.get("seatId")));
-        seat.reserveSeat();
-
-        int flightPrice = flightRepository.findOne(flightId).getPrice();
-        int discount = map.get("discount") == null ? 0 : Integer.parseInt(map.get("discount"));
-        int reservationPrice = flightPrice - discount;
-
-        Reservation reservation = Reservation.createReservation(userRepository.findOne(userId), flightRepository.findOne(flightId), ancillaryService,
-                reservationPrice, seat, reservationStatus);
-
-        reservationService.createReservation(reservation);
-        deleteTempReservation(userId, flightId);
-
-        return reservation.getId();
-    }
-
     public void flushAll() {
         Set<String> keys = redisTemplate.keys("*[0-9]*");
+        System.out.println("====flush=====");
         keys.forEach(k -> System.out.println(k));
 
         redisTemplate.delete(keys);
