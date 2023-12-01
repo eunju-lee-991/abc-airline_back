@@ -1,16 +1,17 @@
 package com.abcairline.abc.controller;
 
 import com.abcairline.abc.domain.User;
-import com.abcairline.abc.dto.reservation.TempReservationDto;
 import com.abcairline.abc.dto.user.UserInfoDto;
 import com.abcairline.abc.service.TempReservationService;
 import com.abcairline.abc.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,9 +22,11 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserInfoDto findOneUser(@PathVariable Long userId) {
-        User user = userService.retrieveOneUser(userId);
+        User user = userService.retrieveOneUserWithReservation(userId);
+        List<Long> tempReservations = tempReservationService.getTempReservation(userId);
+        int tempReservationCount = tempReservations != null ? tempReservations.size() : 0 ;
 
-        int tempReservationCount = tempReservationService.getTempReservation(userId).size();
+        return new UserInfoDto(user, tempReservationCount);
     }
 
     @GetMapping("/")
@@ -43,18 +46,8 @@ public class UserController {
 //        return userService.updateUser(user);
 //    }
 
-    @GetMapping("/{userId}/discounts")
-    public void getDiscounts(@PathVariable Long userId, @RequestParam Long flightId, @RequestParam Map<String, String> tempDataMap) throws JsonProcessingException {
-
-        TempReservationDto tempData = null;
-        if (userId != null && flightId != null) {
-            if (tempDataMap != null) {
-                tempReservationService.setValue(userId, flightId, tempDataMap);
-            }
-
-            Map<String, String> getValue = tempReservationService.getValue(userId, flightId);
-            tempData = new TempReservationDto(getValue);
-        }
-
-    }
+//    @GetMapping("/{userId}/discounts")
+//    public void getDiscounts(@PathVariable Long userId, @RequestParam Long flightId, @RequestParam Map<String, String> tempDataMap) throws JsonProcessingException {
+//
+//    }
 }

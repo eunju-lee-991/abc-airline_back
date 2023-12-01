@@ -1,7 +1,7 @@
-INSERT INTO user(user_id, social_login_yn, email, sign_up_date, last_access_date)
-VALUES (1, 0, 'abc@naver.com',current_date, current_date);
-INSERT INTO user(user_id, social_login_yn, email, sign_up_date, last_access_date)
-VALUES (2, 0, 'efg@gmail.com',current_date, current_date);
+INSERT INTO user(user_id, social_login_yn, email, name, sign_up_date, last_access_date)
+VALUES (1, 0, 'abc@naver.com', "choco" ,current_date, current_date);
+INSERT INTO user(user_id, social_login_yn, email, name, sign_up_date, last_access_date)
+VALUES (2, 0, 'efg@gmail.com', "egg" ,current_date, current_date);
 
 
 INSERT INTO airport(IATACode, name, country, continent, city)
@@ -143,10 +143,10 @@ INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (34, 11,
 INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (35, 11, 'C5', 1);
 INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (36, 11, 'C6', 1);
 
-INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
-VALUES (10000, 1, 11, 250000, 19, 'CONFIRMED');
-INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
-VALUES (10001, 1, 1, 350000, 5, 'PENDING');
+-- INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
+-- VALUES (10000, 1, 11, 250000, 19, 'CONFIRMED');
+-- INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
+-- VALUES (10001, 1, 1, 350000, 5, 'PENDING');
 
 -- INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
 -- VALUES (10002, 2, 1, 350000, 17, 'PENDING');

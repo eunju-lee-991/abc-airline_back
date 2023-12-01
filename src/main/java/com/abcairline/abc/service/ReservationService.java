@@ -1,6 +1,7 @@
 package com.abcairline.abc.service;
 
 import com.abcairline.abc.domain.AncillaryService;
+import com.abcairline.abc.domain.Flight;
 import com.abcairline.abc.domain.Reservation;
 import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import com.abcairline.abc.domain.Seat;
@@ -26,10 +27,14 @@ public class ReservationService {
 
     @Transactional
     // 예약 저장
-    public void createReservation(Reservation reservation) {
-        reservationRepository.save(reservation);
-        Seat seat = flightRepository.findSeat(reservation.getSeat().getId());
+    public void createReservation(Reservation reservation, Long flightId, Long seatId) {
+        Flight flight = flightRepository.findOne(flightId);
+        Seat seat = flightRepository.findSeat(seatId);
         seat.reserveSeat();
+        reservation.setFlight(flight);
+        reservation.setSeat(seat);
+
+        reservationRepository.save(reservation);
     }
 
     // 단건 예약 조회

@@ -7,7 +7,6 @@ import com.abcairline.abc.dto.flight.AirplaneDto;
 import com.abcairline.abc.dto.flight.FlightDto;
 import com.abcairline.abc.dto.flight.FlightResultListDto;
 import com.abcairline.abc.dto.flight.TotalRouteListDto;
-import com.abcairline.abc.dto.reservation.TempReservationDto;
 import com.abcairline.abc.dto.seat.SeatDto;
 import com.abcairline.abc.dto.seat.SeatResultListDto;
 import com.abcairline.abc.service.FlightService;
@@ -86,6 +85,7 @@ public class FlightController {
         return result;
     }
 
+    // 모든 항공편
     @GetMapping({"", "/"})
     public FlightResultListDto findFlights(String departure, String arrival, String date) {
         System.out.println(date);
@@ -105,18 +105,11 @@ public class FlightController {
     @GetMapping("/{flightId}/seats")
     public SeatResultListDto findSeatsForFlight(Long userId, @PathVariable Long flightId, @RequestParam Map<String, String> tempDataMap) throws JsonProcessingException {
         List<Seat> seatList = flightService.retrieveAllSeatsForFlight(flightId);
-        TempReservationDto tempData = null;
-
-        if (userId != null && flightId != null) {
-            Map<String, String> getValue = tempReservationService.getValue(userId, flightId);
-            tempData = new TempReservationDto(getValue);
-        }
 
         SeatResultListDto result = new SeatResultListDto();
         result.setTotalCount(seatList.size());
         result.setAvailableCount((int) seatList.stream().filter(Seat::isAvailable).count());
         result.setData(seatList.stream().map(SeatDto::new).collect(Collectors.toList()));
-        result.setTempDate(tempData); // 저장된 seat 데이터 + etc 보내주는 것
 
         return result;
     }

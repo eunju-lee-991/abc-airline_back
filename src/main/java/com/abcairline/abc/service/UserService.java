@@ -16,15 +16,19 @@ public class UserService {
         return userRepository.findOne(id);
     }
 
+    public User retrieveOneUserWithReservation(Long userId) {
+        return userRepository.findOneWithReservation(userId);
+    }
+
     public List<User> retrieveAllUsers() {
         return userRepository.findAll();
     }
 
-//    public Long saveUser(User user) {
-//
-//    }
-//
-//    public Long updateUser(User user) {
-//
-//    }
+    public Long saveUser(User user) {
+        return null;
+    }
+
+    public Long updateUser(User user) {
+        return null;
+    }
 }

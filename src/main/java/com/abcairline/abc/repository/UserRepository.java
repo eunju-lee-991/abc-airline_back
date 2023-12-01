@@ -1,5 +1,6 @@
 package com.abcairline.abc.repository;
 
+import com.abcairline.abc.domain.Reservation;
 import com.abcairline.abc.domain.User;
 import com.abcairline.abc.dto.user.UserInfoDto;
 import jakarta.persistence.EntityManager;
@@ -25,4 +26,10 @@ public class UserRepository {
         return em.createQuery("select u from User u", User.class).getResultList();
     }
 
+    public User findOneWithReservation(Long userId) {
+        return em.createQuery(
+                        "SELECT u FROM User u WHERE u.id = :userId", User.class)
+                .setParameter("userId", userId)
+                .getSingleResult();
+    }
 }
