@@ -22,6 +22,8 @@ public class User {
     private String password;
     private String imageUrl;
     private boolean socialLoginYn;
+    private String provider;
+    private String providerId;
     private LocalDateTime signUpDate;
     private LocalDateTime lastAccessDate;
     private String role;

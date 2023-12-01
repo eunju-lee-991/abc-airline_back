@@ -2,6 +2,7 @@ package com.abcairline.abc.repository;
 
 import com.abcairline.abc.domain.Reservation;
 import com.abcairline.abc.domain.User;
+import com.abcairline.abc.domain.UserCoupon;
 import com.abcairline.abc.dto.user.UserInfoDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,19 @@ public class UserRepository {
                         "SELECT u FROM User u WHERE u.id = :userId", User.class)
                 .setParameter("userId", userId)
                 .getSingleResult();
+    }
+
+    public List<UserCoupon> findUserCouponsForUser(Long userId) {
+        return em.createQuery(
+                        "SELECT uc FROM UserCoupon uc WHERE uc.user.id = :userId", UserCoupon.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    public UserCoupon findUserOneCoupon(Long userCouponId) {
+        {
+            return em.find(UserCoupon.class, userCouponId);
+        }
+
     }
 }

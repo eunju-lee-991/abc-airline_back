@@ -14,7 +14,6 @@ import java.util.Map;
 @Data
 public class ReservationDto {
     private Long id;
-    private String email;
     private int reservationPrice;
     private String flightNumber;
     private String departure;
@@ -37,7 +36,6 @@ public class ReservationDto {
         WifiCapacityToStringConverter wifiConverter = new WifiCapacityToStringConverter();
 
         this.id = reservation.getId();
-        this.email = reservation.getUser().getEmail();
         this.reservationPrice = reservation.getReservationPrice();
         this.flightNumber = reservation.getFlight().getFlightNumber();
         this.departure = reservation.getFlight().getRoute().getDeparture().getCity();

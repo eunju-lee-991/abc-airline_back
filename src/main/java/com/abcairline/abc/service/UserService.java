@@ -1,6 +1,7 @@
 package com.abcairline.abc.service;
 
 import com.abcairline.abc.domain.User;
+import com.abcairline.abc.domain.UserCoupon;
 import com.abcairline.abc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,20 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Long saveUser(User user) {
-        return null;
+    public List<UserCoupon> retrieveUserCoupons(Long userId) {
+        return userRepository.findUserCouponsForUser(userId);
     }
 
-    public Long updateUser(User user) {
-        return null;
+    public UserCoupon retrieveOneUserCoupon(Long userCouponId) {
+        return userRepository.findUserOneCoupon(userCouponId);
     }
+
+//
+//    public Long saveUser(User user) {
+//        return null;
+//    }
+//
+//    public Long updateUser(User user) {
+//        return null;
+//    }
 }

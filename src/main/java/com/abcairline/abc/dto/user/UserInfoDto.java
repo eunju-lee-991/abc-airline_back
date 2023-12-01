@@ -16,6 +16,7 @@ public class UserInfoDto {
     private String email;
     private String name;
     private String imageUrl;
+    private boolean socialLoginYn;
     private String signUpDate;
     private ReservationCountDto reservationCounts;
 
@@ -24,6 +25,7 @@ public class UserInfoDto {
         this.email = user.getEmail();
         this.name = user.getName();
         this.imageUrl = user.getImageUrl();
+        this.socialLoginYn = user.isSocialLoginYn();
         this.signUpDate = user.getSignUpDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.reservationCounts = new ReservationCountDto();
         this.reservationCounts.setTempReservationCount(tempReservationCount);

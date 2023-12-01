@@ -143,6 +143,18 @@ INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (34, 11,
 INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (35, 11, 'C5', 1);
 INSERT INTO seat (seat_id, flight_id, seat_number, is_available) VALUES (36, 11, 'C6', 1);
 
+INSERT INTO Coupon (coupon_id, coupon_name, discount_price, valid_days) VALUES (100, 'Signup Coupon', '1000', 14);
+INSERT INTO Coupon (coupon_id, coupon_name, discount_price, valid_days) VALUES (101, '10th Anniversary coupon', '2000', 21);
+
+INSERT INTO User_Coupon (user_coupon_id, user_id, coupon_id, used_yn, creation_date, expiration_date)
+VALUES (100, 1, 100, false, current_date, '2023-12-15 23:59:59.000000');
+INSERT INTO User_Coupon (user_coupon_id, user_id, coupon_id, used_yn, creation_date, expiration_date)
+VALUES (101, 1, 101, false, current_date, '2023-12-22 23:59:59.000000');
+INSERT INTO User_Coupon (user_coupon_id, user_id, coupon_id, used_yn, creation_date, expiration_date)
+VALUES (102, 2, 100, false, current_date, '2023-12-15 23:59:59.000000');
+INSERT INTO User_Coupon (user_coupon_id, user_id, coupon_id, used_yn, creation_date, expiration_date)
+VALUES (103, 2, 101, false, current_date, '2023-12-22 23:59:59.000000');
+
 INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status, in_flight_meal, luggage, wifi)
 VALUES (10000, 1, 11, 250000, 19, 'CONFIRMED' , 'NONE', 'NONE', 'NONE');
 INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status, in_flight_meal, luggage, wifi)
