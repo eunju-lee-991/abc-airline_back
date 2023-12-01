@@ -23,4 +23,11 @@ public class AncillaryServiceStringDto {
         this.luggage = luggageConverter.convert(ancillaryService.getLuggage());
         this.wifi = wifiConverter.convert(ancillaryService.getWifi());
     }
+
+    public AncillaryServiceStringDto() {
+
+        this.inFlightMeal = "선택안함";
+        this.luggage = "선택안함";
+        this.wifi = "선택안함";
+    }
 }

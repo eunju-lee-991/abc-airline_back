@@ -4,18 +4,17 @@ import com.abcairline.abc.domain.User;
 import com.abcairline.abc.dto.user.UserInfoDto;
 import com.abcairline.abc.service.TempReservationService;
 import com.abcairline.abc.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
     private final TempReservationService tempReservationService;
     private final UserService userService;
@@ -33,21 +32,10 @@ public class UserController {
     public List<User> findAllUsers() {
         return userService.retrieveAllUsers();
     }
-//
-//    @PostMapping("/")
-//    public Long saveUser(User user) {
-//
-//        return userService.saveUser(user);
-//    }
-//
-//    @PutMapping("/{userId}")
-//    public Long updateUser(User user) {
-//
-//        return userService.updateUser(user);
-//    }
 
-//    @GetMapping("/{userId}/discounts")
-//    public void getDiscounts(@PathVariable Long userId, @RequestParam Long flightId, @RequestParam Map<String, String> tempDataMap) throws JsonProcessingException {
-//
-//    }
+
+    @GetMapping("/{userId}/coupons")
+    public void getCoupons(@PathVariable Long userId) throws JsonProcessingException {
+
+    }
 }

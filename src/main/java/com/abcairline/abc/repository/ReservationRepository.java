@@ -37,7 +37,8 @@ public class ReservationRepository {
                 .setParameter("reservationId", reservationId).getSingleResult();
     }
     public List<Reservation> findAll() {
-        return em.createQuery("select r from Reservation r", Reservation.class).getResultList();
+        return em.createQuery("select r from Reservation r " +
+                " join fetch r.seat s", Reservation.class).getResultList();
     }
 
     public List<Reservation> findAllForUser(Long userId) {

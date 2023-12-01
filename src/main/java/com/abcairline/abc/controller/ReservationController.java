@@ -2,11 +2,11 @@ package com.abcairline.abc.controller;
 
 import com.abcairline.abc.domain.AncillaryService;
 import com.abcairline.abc.domain.Reservation;
+import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import com.abcairline.abc.dto.reservation.*;
 import com.abcairline.abc.dto.reservation.ancillary.AncillaryServiceListDto;
 import com.abcairline.abc.dto.reservation.temp.TempDataRequest;
 import com.abcairline.abc.dto.reservation.temp.TempReservationDto;
-import com.abcairline.abc.exception.ReservationNotExecuteException;
 import com.abcairline.abc.service.ReservationService;
 import com.abcairline.abc.service.TempReservationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users/{userId}/reservations")
+@RequestMapping("/api/v1")
 public class ReservationController {
     private final ReservationService reservationService;
     private final TempReservationService tempReservationService;
@@ -30,30 +30,20 @@ public class ReservationController {
     // /api/flights/{flightId}/seats
 
     // 부가서비스 페이지
-    @GetMapping("/ancillary-services")
-    public AncillaryServiceListDto getAncillaryServices(@PathVariable Long userId, @RequestParam Long flightId, @RequestParam Map<String, String> tempDataMap) throws JsonProcessingException {
+    @GetMapping("/reservations/ancillary-services")
+    public AncillaryServiceListDto getAncillaryServices() throws JsonProcessingException {
         return new AncillaryServiceListDto();
     }
 
-    // 할인 페이지 진입
-    // /api/users/{userId}/discounts
-
     // 예약 저장
-    @PostMapping("/")
+    @PostMapping("/users/{userId}/reservations")
     public Long saveReservation(@PathVariable Long userId, CreateReservationRequest request) throws JsonProcessingException {
-        if (userId == null || request.getFlightId() == null) {
-            throw new ReservationNotExecuteException("no user id or no flight id");
-        }
-
-        if(request.getSeatId() == null){
-            throw new ReservationNotExecuteException("no seat selected");
-        }
-
         Reservation reservation = new Reservation();
         reservation.setAncillaryService(AncillaryService.createAncillaryService(request.getInFlightMeal(), request.getLuggage(), request.getWifi()));
         reservation.setReservationPrice(request.getReservationPrice());
+        reservation.setStatus(ReservationStatus.PENDING);
         reservation.setReservationDate(LocalDateTime.now());
-        reservationService.createReservation(reservation, request.getFlightId(), request.getSeatId());
+        reservationService.createReservation(reservation, userId, request.getFlightId(), request.getSeatId());
 
         // 예약 임시 저장 데이터 삭제
         tempReservationService.deleteTempReservation(userId, request.getFlightId());
@@ -62,14 +52,25 @@ public class ReservationController {
     }
 
     // one reservation
-    @GetMapping("/{reservationId}")
+    @GetMapping("/reservations/{reservationId}")
     public ReservationDto findReservation(@PathVariable Long reservationId) {
         Reservation reservation = reservationService.retrieveReservationWithAllInformation(reservationId);
         return new ReservationDto(reservation);
     }
 
+    // all reservation
+    @GetMapping("/reservations")
+    public SimpleReservationListDto findAllReservation() {
+        List<Reservation> reservations = reservationService.retrieveAllReservations();
+        SimpleReservationListDto dto = new SimpleReservationListDto();
+        dto.setCount(reservations.size());
+        dto.setData(reservations.stream().map(SimpleReservationDto::new).collect(Collectors.toList()));
+
+        return dto;
+    }
+
     // user's all reservations
-    @GetMapping("/")
+    @GetMapping("/users/{userId}/reservations")
     public ReservationResultListDto findReservationsForUser(@PathVariable Long userId) {
         List<Reservation> reservationList = reservationService.retrieveReservationsForUser(userId);
         ReservationResultListDto result = new ReservationResultListDto();
@@ -79,17 +80,16 @@ public class ReservationController {
         return result;
     }
 
-    @PutMapping("/{reservationId}")
+    @PutMapping("/reservations/{reservationId}")
     public SimpleReservationDto updateReservation(@PathVariable("reservationId") Long reservationId, UpdateReservationRequest request) {
         AncillaryService ancillaryService = AncillaryService.createAncillaryService(request.getInFlightMeal(), request.getLuggage(), request.getWifi());
         reservationService.updateReservation(reservationId, ancillaryService, request.getSeatId());
-//        Reservation reservation = reservationService.retrieveReservation(reservationId);
-// retrieveReservation 로도 해보기
+
         Reservation reservation = reservationService.retrieveReservationWithAllInformation(reservationId);
         return new SimpleReservationDto(reservation);
     }
 
-    @PostMapping("/{reservationId}")
+    @PostMapping("/reservations/{reservationId}")
     public SimpleReservationDto cancelReservation(@PathVariable("reservationId") Long reservationId) {
         reservationService.cancelReservation(reservationId);
         Reservation reservation = reservationService.retrieveReservationWithAllInformation(reservationId);
@@ -97,7 +97,7 @@ public class ReservationController {
         return new SimpleReservationDto(reservation);
     }
 
-    @GetMapping("/temp-data")
+    @GetMapping("/users/{userId}/reservations/temp-data")
     public TempReservationDto getTempReservation(@PathVariable Long userId, @RequestParam Long flightId) throws JsonProcessingException {
         Map<String, String> map = new HashMap<>(); // TempData DTO!?
         if (userId != null && flightId != null) {
@@ -107,7 +107,7 @@ public class ReservationController {
         return new TempReservationDto(map);
     }
 
-    @PostMapping("/temp-save")
+    @PostMapping("/users/{userId}/reservations/temp-data")
     public void saveTempReservation(@PathVariable Long userId, TempDataRequest request) throws JsonProcessingException {
         if (userId != null && request.getFlightId() != null) {
             Map<String, String> map = new HashMap<>();
@@ -115,22 +115,8 @@ public class ReservationController {
             map.put("inFlightMeal", request.getInFlightMeal());
             map.put("luggage", request.getLuggage());
             map.put("wifi", request.getWifi());
-            map.put("discount", String.valueOf(request.getDiscount()));
 
             tempReservationService.setValue(userId, request.getFlightId(), map);
         }
-    }
-
-    // 결제 페이지 진입
-    @GetMapping("/{reservationId}/payment")
-    public Integer payForReservation(@PathVariable Long reservationId) {
-        int reservationPrice = reservationService.retrieveReservation(reservationId).getReservationPrice();
-
-        /**
-         *
-         *
-         */
-
-        return reservationPrice;
     }
 }

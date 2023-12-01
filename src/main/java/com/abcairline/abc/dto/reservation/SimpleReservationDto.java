@@ -15,7 +15,11 @@ public class SimpleReservationDto {
 
     public SimpleReservationDto(Reservation reservation) {
         this.id = reservation.getId();
-        this.ancillaryService = new AncillaryServiceStringDto(reservation.getAncillaryService());
+        if(reservation.getAncillaryService() != null){
+            this.ancillaryService = new AncillaryServiceStringDto(reservation.getAncillaryService());
+        }else {
+            this.ancillaryService = new AncillaryServiceStringDto();
+        }
         this.seatNumber = reservation.getSeat().getSeatNumber();
         this.reservationPrice = reservation.getReservationPrice();
         this.status = reservation.getStatus();

@@ -8,6 +8,7 @@ import com.abcairline.abc.domain.enumeration.converter.WifiCapacityToStringConve
 import lombok.Data;
 
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -24,7 +25,7 @@ public class ReservationDto {
     private String departureTime;
     private String arrivalDate;
     private String arrivalTime;
-    private Map<String, String> ancillaryService;
+    private Map<String, String> ancillaryService = new HashMap<>();
     private String airplaneModel;
     private String airplaneSeries;
     private String seatNumber;
@@ -56,6 +57,10 @@ public class ReservationDto {
             ancillaryService.put("inFlightMeal", mealConverter.convert(reservation.getAncillaryService().getInFlightMeal()));
             ancillaryService.put("luggage", luggageConverter.convert(reservation.getAncillaryService().getLuggage()));
             ancillaryService.put("wifi", wifiConverter.convert(reservation.getAncillaryService().getWifi()));
-       }
+       }else {
+            ancillaryService.put("inFlightMeal", "선택안함");
+            ancillaryService.put("luggage", "선택안함");
+            ancillaryService.put("wifi", "선택안함");
+        }
     }
 }

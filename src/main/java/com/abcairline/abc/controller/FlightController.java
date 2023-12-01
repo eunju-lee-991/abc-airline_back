@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/flights")
+@RequestMapping("/api/v1/flights")
 public class FlightController {
     private final FlightService flightService;
     private final TempReservationService tempReservationService;

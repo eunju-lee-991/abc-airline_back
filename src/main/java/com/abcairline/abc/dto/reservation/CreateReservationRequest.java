@@ -10,5 +10,4 @@ public class CreateReservationRequest {
     private String wifi;
     private int reservationPrice;
     private Long seatId;
-
 }
