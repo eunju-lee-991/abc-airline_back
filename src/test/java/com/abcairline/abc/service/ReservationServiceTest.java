@@ -2,10 +2,14 @@ package com.abcairline.abc.service;
 
 import com.abcairline.abc.domain.*;
 import com.abcairline.abc.domain.enumeration.InFlightMeal;
+import com.abcairline.abc.domain.enumeration.LuggageWeight;
 import com.abcairline.abc.domain.enumeration.ReservationStatus;
+import com.abcairline.abc.dto.reservation.CreateReservationRequest;
+import com.abcairline.abc.dto.reservation.UpdateReservationRequest;
 import com.abcairline.abc.exception.InvalidReservationStateException;
 import com.abcairline.abc.repository.FlightRepository;
 import com.abcairline.abc.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -16,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,106 +35,88 @@ class ReservationServiceTest {
     UserRepository userRepository;
     @Autowired
     FlightRepository flightRepository;
+    @Autowired
+    TempReservationService tempReservationService;
 
     @Test
     @Transactional
-    @Rollback(value = false)
-    @Order(1)
-    public void testCreateAndRetrieveReservation() {
-        User user = userRepository.findOne(2L);
-        Flight flight = flightRepository.findOne(11L);
-        Seat seat = flightRepository.findSeat(21L);
+    void testCreateReservation() throws JsonProcessingException {
+        Reservation reservation = new Reservation();
+        Assertions.assertThat(reservation.getId()).isNull();
+        reservation.setAncillaryService(AncillaryService.createAncillaryService("FISH", "TEN_KG", "TEN_GB"));
+        reservation.setReservationDate(LocalDateTime.now());
+        reservation.setReservationPrice(9900);
+        reservation.setStatus(ReservationStatus.PENDING);
         Map<String, String> map = new HashMap<>();
-        map.put("inFlightMeal", "fish");
-        map.put("luggage", "FIFTEEN_KG");
-        map.put("wifi", "FIVE_GB");
-        AncillaryService ancillaryService = AncillaryService.createAncillaryService(map);
-        Reservation reservation = Reservation.createReservation(user, flight, ancillaryService, 50000, seat, ReservationStatus.CONFIRMED);
-        reservationService.createReservation(reservation);
-        Long saved = reservation.getId();
+        Long userId = 2L;
+        Long flightId = 1L;
+        map.put("dummy", "dummy");
+        tempReservationService.setValue(userId, flightId, map);
+        reservationService.createReservation(reservation, userId, flightId, 10L);
+        tempReservationService.deleteTempReservation(userId, flightId);
 
-        Reservation find = reservationService.retrieveReservation(saved);
-        Assertions.assertThat(user).isEqualTo(find.getUser());
-        Assertions.assertThat(find.getSeat().getSeatNumber()).isEqualTo("A3");
-        Assertions.assertThat(find.getSeat().isAvailable()).isEqualTo(false);
-        Assertions.assertThat(find.getFlight().getRoute().getDeparture().getIATACode()).isEqualTo("NRT");
-    }
-
-//    @Test
-//    @Order(2)
-//    public void testRetrieveAllReservations() {
-//        reservationService.retrieveAllReservations().stream().forEach(
-//                r -> Assertions.assertThat(r.getStatus()).isEqualTo(ReservationStatus.CONFIRMED)
-//        );
-//
-//    }
-
-    @Test
-    @Order(2)
-    public void testRetrieveReservationsForUser() {
-        List<Reservation> reservationFor1 = reservationService.retrieveReservationsForUser(1L);
-        List<Reservation> reservationFor2 = reservationService.retrieveReservationsForUser(2L);
-
-        Assertions.assertThat(reservationFor2.get(0).getId()).isEqualTo(1L);
-
-        Assertions.assertThat(reservationFor2.size()).isEqualTo(1);
-        Assertions.assertThat(reservationFor1.size()).isEqualTo(2);
+        Assertions.assertThat(reservation.getId()).isNotNull();
+        Assertions.assertThat(tempReservationService.getValue(userId, flightId)).isNull();
+        System.out.println(reservation.getId());
     }
 
     @Test
-    @Order(3)
-    public void testUpdateReservation() {
-        // 10000L CONFIRMED
-        Reservation reservation1 = new Reservation();
-        reservation1.setId(10000L);
-        reservation1.setSeat(flightRepository.findSeat(25L)); // 원래 A1
-
-        Map<String, String> map = new HashMap<>();
-        map.put("inFlightMeal", "NONE");
-        map.put("luggage", "NONE");
-        map.put("wifi", "NONE");
-
-//        AncillaryService ancillaryService = AncillaryService.createAncillaryService(map);
-
-        // it should throw exception
-        Assertions.assertThatThrownBy(() -> reservationService.updateReservation(10000L, AncillaryService.createAncillaryService(map), 11L)).isInstanceOf(InvalidReservationStateException.class);
-
-        // 10001L PENDING
-        Reservation reservation2 = new Reservation();
-        reservation2.setId(10001L);
-
-        Map<String, String> serviceMap = new HashMap<>();
-
-        serviceMap.put("wifi", "NONE");
-        AncillaryService ancillaryService = AncillaryService.createAncillaryService(serviceMap);
-
-        reservationService.updateReservation(10001L, ancillaryService, 10L);
-        Reservation find = reservationService.retrieveReservation(10001L);
-        Assertions.assertThat(find.getAncillaryService().getInFlightMeal()).isEqualTo(InFlightMeal.NONE);
-        Assertions.assertThat(find.getSeat().getSeatNumber()).isEqualTo("B4");
-        Assertions.assertThat(find.getReservationPrice()).isEqualTo(350000); // 결제 금액은 변하면 안됨
-        Assertions.assertThat(flightRepository.findSeat(10L).isAvailable()).isEqualTo(false);
-        Assertions.assertThat(find.getSeat().isAvailable()).isEqualTo(false);
-       }
+    void testRetrieveReservation() {
+        System.out.println("======testRetrieveReservation====");
+        Reservation reservation = reservationService.retrieveReservationWithAllInformation(10000L);
+        Assertions.assertThat(reservation.getReservationPrice()).isEqualTo(250000);
+        Assertions.assertThat(reservation.getFlight().getFlightNumber()).isEqualTo("AA331");
+        Assertions.assertThat(reservation.getSeat().getSeatNumber()).isEqualTo("A1");
+    }
 
     @Test
-    @Order(4)
-    public void testCancelReservation() {
-        Reservation reservation1 = new Reservation();
-        reservation1.setId(10000L); // 10000L CONFIRMED
+    void testRetrieveAllReservations() {
+        System.out.println("======testRetrieveAllReservations====");
+        Assertions.assertThat(reservationService.retrieveAllReservations().size()).isEqualTo(4);
+    }
 
-        Reservation reservation2 = new Reservation();
-        reservation2.setId(10001L); // 10001L PENDING
+    @Test
+    void testUpdateReservation() {
+        UpdateReservationRequest request = new UpdateReservationRequest();
+        Long reservationId = 10003L;
+        request.setInFlightMeal("PORK");
+        request.setWifi("FIVE_GB");
+        request.setLuggage("TWENTY_KG");
+        request.setSeatId(13L);
+        AncillaryService ancillaryService = AncillaryService.createAncillaryService(request.getInFlightMeal(), request.getLuggage(), request.getWifi());
+        reservationService.updateReservation(reservationId, ancillaryService, request.getSeatId());
 
-        Assertions.assertThatThrownBy(() -> reservationService.cancelReservation(reservation1.getId())).isInstanceOf(InvalidReservationStateException.class);
+        Reservation reservation = reservationService.retrieveReservationWithAllInformation(reservationId);
+        Assertions.assertThat(reservation.getSeat().getSeatNumber()).isEqualTo("C1");
+        Assertions.assertThat(reservation.getSeat().isAvailable()).isEqualTo(false);
+        Assertions.assertThat(reservation.getAncillaryService().getLuggage()).isEqualTo(LuggageWeight.TWENTY_KG);
+        // 원래 seat_id 는 18
+        Assertions.assertThat(flightRepository.findSeat(18L).isAvailable()).isEqualTo(true);
+    }
 
-        reservationService.cancelReservation(reservation2.getId());
-        Reservation find = reservationService.retrieveReservation(reservation2.getId());
+    @Test
+    void testCancelReservation() {
+        Long reservationId = 10003L;
+        reservationService.cancelReservation(reservationId);
 
-        Assertions.assertThat(find.getStatus()).isEqualTo(ReservationStatus.CANCEL);
-        Assertions.assertThat(find.getSeat().isAvailable()).isEqualTo(true);
+        Reservation reservation = reservationService.retrieveReservationWithAllInformation(reservationId);
+        Assertions.assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.CANCEL);
+        Assertions.assertThat(reservation.getSeat().isAvailable()).isEqualTo(true);
 
-        Assertions.assertThatThrownBy(() -> reservationService.cancelReservation(find.getId())).isInstanceOf(InvalidReservationStateException.class);
+        Long wrongReservationId = 10000L;
+        Assertions.assertThatThrownBy(() -> reservationService.cancelReservation(wrongReservationId)).isInstanceOf(InvalidReservationStateException.class);
+    }
 
+    @Test
+    void testConfirmReservation() {
+        // 결제 끝....
+        Long reservationId = 10001L;
+        reservationService.confirmReservation(reservationId);
+        Reservation reservation = reservationService.retrieveReservation(reservationId);
+        Assertions.assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.CONFIRMED);
+
+        Long canceledId = 10003L;
+        Assertions.assertThatThrownBy(() -> reservationService.confirmReservation(canceledId))
+                .isInstanceOf(InvalidReservationStateException.class);
     }
 }

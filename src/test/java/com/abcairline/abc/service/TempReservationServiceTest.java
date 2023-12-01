@@ -92,6 +92,11 @@ class TempReservationServiceTest {
     }
 
     @Test
+    void testDeleteNotExistData() throws JsonProcessingException {
+        tempReservationService.deleteTempReservation(999L, 999L);
+    }
+
+    @Test
     void testFlushAll() throws JsonProcessingException {
         Map<String, String> map = new HashMap<>();
         map.put("dummy", "dummy");
