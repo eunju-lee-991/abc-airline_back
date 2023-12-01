@@ -1,22 +1,20 @@
-package com.abcairline.abc.dto.reservation;
+package com.abcairline.abc.dto.reservation.ancillary;
 
 import com.abcairline.abc.domain.enumeration.InFlightMeal;
 import com.abcairline.abc.domain.enumeration.LuggageWeight;
 import com.abcairline.abc.domain.enumeration.WifiCapacity;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Data
-public class AncillaryServiceDto {
+public class AncillaryServiceListDto {
     private Map<String, String> inFlightMeal;
     private Map<String, String> luggage;
     private Map<String, String> wifi;
 
-    public AncillaryServiceDto() {
+    public AncillaryServiceListDto() {
         setServices();
     }
 

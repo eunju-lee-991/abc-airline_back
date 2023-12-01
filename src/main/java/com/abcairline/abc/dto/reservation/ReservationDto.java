@@ -8,6 +8,7 @@ import com.abcairline.abc.domain.enumeration.converter.WifiCapacityToStringConve
 import lombok.Data;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @Data
 public class ReservationDto {
@@ -23,9 +24,7 @@ public class ReservationDto {
     private String departureTime;
     private String arrivalDate;
     private String arrivalTime;
-    private String inFlightMeal;
-    private String luggage;
-    private String wifi;
+    private Map<String, String> ancillaryService;
     private String airplaneModel;
     private String airplaneSeries;
     private String seatNumber;
@@ -52,11 +51,11 @@ public class ReservationDto {
         this.airplaneSeries = reservation.getFlight().getAirplane().getSeries();
         this.seatNumber = reservation.getSeat().getSeatNumber();
         this.reservationStatus = reservation.getStatus().name();
-        AncillaryService ancillaryService;
-        if ((ancillaryService = reservation.getAncillaryService()) != null) {
-            this.inFlightMeal = mealConverter.convert(ancillaryService.getInFlightMeal());
-            this.luggage = luggageConverter.convert(ancillaryService.getLuggage());
-            this.wifi = wifiConverter.convert(ancillaryService.getWifi());
-        }
+
+        if (reservation.getAncillaryService() != null) {
+            ancillaryService.put("inFlightMeal", mealConverter.convert(reservation.getAncillaryService().getInFlightMeal()));
+            ancillaryService.put("luggage", luggageConverter.convert(reservation.getAncillaryService().getLuggage()));
+            ancillaryService.put("wifi", wifiConverter.convert(reservation.getAncillaryService().getWifi()));
+       }
     }
 }

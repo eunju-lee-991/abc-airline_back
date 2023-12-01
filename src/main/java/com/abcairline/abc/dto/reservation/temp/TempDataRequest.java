@@ -1,4 +1,4 @@
-package com.abcairline.abc.dto.reservation;
+package com.abcairline.abc.dto.reservation.temp;
 
 import lombok.Data;
 
