@@ -9,5 +9,4 @@ public class TempDataRequest {
     private String inFlightMeal;
     private String luggage;
     private String wifi;
-    private int discount;
 }
