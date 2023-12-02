@@ -56,7 +56,6 @@ public class TempReservationService {
                 .collect(Collectors.toList());
     }
 
-    //
     public void deleteTempReservation(Long userId, Long flightId) {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
 
@@ -64,9 +63,9 @@ public class TempReservationService {
         System.out.println("deleted ====> " + delete);
     }
 
-    public void flushAll() {
+    public void deleteAllTempReservations() {
         Set<String> keys = redisTemplate.keys("*[0-9]*");
-        System.out.println("====flush=====");
+        System.out.println("====flush all=====");
         keys.forEach(k -> System.out.println(k));
 
         redisTemplate.delete(keys);

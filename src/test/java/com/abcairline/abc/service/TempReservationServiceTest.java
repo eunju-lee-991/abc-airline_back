@@ -22,7 +22,7 @@ class TempReservationServiceTest {
 
     @BeforeEach
     public void flushAll() {
-        tempReservationService.flushAll();
+        tempReservationService.deleteAllTempReservations();
     }
 
     @Test
