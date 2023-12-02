@@ -21,6 +21,7 @@ import java.util.List;
 public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final UserService userService;
+    private final FlightService flightService;
     private final FlightRepository flightRepository;
 
     @Transactional
@@ -35,8 +36,10 @@ public class ReservationService {
         }
 
         User user = userService.retrieveOneUser(userId);
-        Flight flight = flightRepository.findOne(flightId);
-        Seat seat = flightRepository.findSeat(seatId);
+        Flight flight = flightService.retrieveOneFlight(flightId);
+        Seat seat = flightService.retrieveOntSeat(seatId);
+
+
         seat.reserveSeat();
         reservation.setUser(user);
         reservation.setFlight(flight);

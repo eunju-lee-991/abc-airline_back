@@ -49,9 +49,6 @@ public class PayService {
 
         payRepository.save(payment);
 
-        if (payment.getId() != null) {
-            reservationService.confirmReservation(reservationId);
-        }
     }
 
     public Payment retrieveOnePayment(Long paymentId) {

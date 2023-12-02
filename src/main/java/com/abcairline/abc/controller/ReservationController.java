@@ -7,6 +7,7 @@ import com.abcairline.abc.dto.reservation.*;
 import com.abcairline.abc.dto.reservation.ancillary.AncillaryServiceListDto;
 import com.abcairline.abc.dto.reservation.temp.TempDataRequest;
 import com.abcairline.abc.dto.reservation.temp.TempReservationDto;
+import com.abcairline.abc.service.RankingService;
 import com.abcairline.abc.service.ReservationService;
 import com.abcairline.abc.service.TempReservationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class ReservationController {
     private final ReservationService reservationService;
     private final TempReservationService tempReservationService;
+    private final RankingService rankingService;
 
     // 좌석 지정 페이지 진입
     // /api/flights/{flightId}/seats
@@ -47,6 +49,9 @@ public class ReservationController {
 
         // 예약 임시 저장 데이터 삭제
         tempReservationService.deleteTempReservation(userId, request.getFlightId());
+
+        // 예약 순위 데이터 저장 (route를 저장)
+        rankingService.recordReservation(reservation.getFlight().getRoute().getId());
 
         return reservation.getId();
     }
@@ -89,7 +94,7 @@ public class ReservationController {
         return new SimpleReservationDto(reservation);
     }
 
-    @PostMapping("/reservations/{reservationId}")
+    @PostMapping("/reservations/{reservationId}/cancel")
     public SimpleReservationDto cancelReservation(@PathVariable("reservationId") Long reservationId) {
         reservationService.cancelReservation(reservationId);
         Reservation reservation = reservationService.retrieveReservationWithAllInformation(reservationId);

@@ -54,6 +54,9 @@ class ReservationServiceTest {
         tempReservationService.setValue(userId, flightId, map);
         reservationService.createReservation(reservation, userId, flightId, 10L);
         tempReservationService.deleteTempReservation(userId, flightId);
+        System.out.println("========route===========");
+        System.out.println(reservation.getFlight().getRoute().getArrival().getIATACode());
+        System.out.println(reservation.getFlight().getRoute().getDeparture().getIATACode());
 
         Assertions.assertThat(reservation.getId()).isNotNull();
         Assertions.assertThat(tempReservationService.getValue(userId, flightId)).isNull();

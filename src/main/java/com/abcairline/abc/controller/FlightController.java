@@ -9,6 +9,8 @@ import com.abcairline.abc.dto.flight.FlightResultListDto;
 import com.abcairline.abc.dto.flight.TotalRouteListDto;
 import com.abcairline.abc.dto.seat.SeatDto;
 import com.abcairline.abc.dto.seat.SeatResultListDto;
+import com.abcairline.abc.repository.FlightRouteRepository;
+import com.abcairline.abc.service.FlightRouteService;
 import com.abcairline.abc.service.FlightService;
 import com.abcairline.abc.service.TempReservationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,19 +30,20 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/flights")
 public class FlightController {
     private final FlightService flightService;
+    private final FlightRouteService flightRouteService;
     private final TempReservationService tempReservationService;
 
     @GetMapping("/routes")
     public TotalRouteListDto findAllRoutes() { // 운행 중인 전체 노선
         TotalRouteListDto result = new TotalRouteListDto();
 
-        List<Airport> departureAirports = flightService.retrieveAllDepartures();
+        List<Airport> departureAirports = flightRouteService.retrieveAllDepartures();
         result.setDepartures(departureAirports.stream().map(AirportDto::new).collect(Collectors.toList()));
         Map<String, List<AirportDto>> arrivalMap = new HashMap<>();
 
         int count = 0;
         for (Airport ap : departureAirports) {
-            List<Airport> arrivals = flightService.retrieveArrivalsByDeparture(ap.getIATACode());
+            List<Airport> arrivals = flightRouteService.retrieveArrivalsByDeparture(ap.getIATACode());
             count += arrivals.size();
             arrivalMap.put(ap.getIATACode(), arrivals.stream().map(AirportDto::new).collect(Collectors.toList()));
         }
@@ -52,7 +55,7 @@ public class FlightController {
 
     @GetMapping("/departures")
     public AirportResultListDto findDepartures() {
-        List<Airport> airports = flightService.retrieveAllDepartures();
+        List<Airport> airports = flightRouteService.retrieveAllDepartures();
         AirportResultListDto result = new AirportResultListDto();
         result.setCount(airports.size());
         List<AirportDto> dtoList = airports.stream().map(AirportDto::new).collect(Collectors.toList());
@@ -63,7 +66,7 @@ public class FlightController {
 
     @GetMapping("/arrivals")
     public AirportResultListDto findArrivals() {
-        List<Airport> airports = flightService.retrieveAllArrivals();
+        List<Airport> airports = flightRouteService.retrieveAllArrivals();
 
         AirportResultListDto result = new AirportResultListDto();
         result.setCount(airports.size());
@@ -75,7 +78,7 @@ public class FlightController {
 
     @GetMapping("/arrivals/{IATACode}")
     public AirportResultListDto findArrivalsForDeparture(@PathVariable String IATACode) {
-        List<Airport> airports = flightService.retrieveArrivalsByDeparture(IATACode);
+        List<Airport> airports = flightRouteService.retrieveArrivalsByDeparture(IATACode);
 
         AirportResultListDto result = new AirportResultListDto();
         result.setCount(airports.size());

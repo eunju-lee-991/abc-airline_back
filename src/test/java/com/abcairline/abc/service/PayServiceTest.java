@@ -27,6 +27,9 @@ class PayServiceTest {
         Payment payment = new Payment();
         payment.setPaymentMethod("card");
         payService.pay(payment, reservationId, userCouponId);
+        if (payment.getId() != null) {
+            reservationService.confirmReservation(reservationId);
+        }
 
         Reservation reservation = reservationService.retrieveReservation(reservationId);
         UserCoupon userCoupon = userService.retrieveOneUserCoupon(userCouponId);
@@ -49,6 +52,9 @@ class PayServiceTest {
         Payment payment = new Payment();
         payment.setPaymentMethod("card");
         payService.pay(payment, reservationId, null);
+        if (payment.getId() != null) {
+            reservationService.confirmReservation(reservationId);
+        }
 
         Assertions.assertThat(payment.getOriginalReservationPrice()).isEqualTo(reservation.getReservationPrice());
         Assertions.assertThat(payment.getPaidPrice()).isEqualTo(reservation.getReservationPrice());

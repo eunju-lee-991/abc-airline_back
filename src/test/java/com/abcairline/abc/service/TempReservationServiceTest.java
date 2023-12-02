@@ -102,7 +102,7 @@ class TempReservationServiceTest {
         map.put("dummy", "dummy");
         tempReservationService.setValue(1L, 1L, map);
         tempReservationService.setValue(2L, 2L, map);
-        tempReservationService.flushAll();
+        tempReservationService.deleteAllTempReservations();
 
         Assertions.assertThat(tempReservationService.getValue(1L, 1L)).isNull();
         Assertions.assertThat(tempReservationService.getValue(2L, 2L)).isNull();

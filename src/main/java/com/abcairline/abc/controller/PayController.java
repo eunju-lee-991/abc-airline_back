@@ -31,6 +31,10 @@ public class PayController {
 
         payService.pay(payment, reservationId, request.getUserCouponId());
 
+        if (payment.getId() != null) {
+            reservationService.confirmReservation(reservationId);
+        }
+
         return payment.getId();
     }
 

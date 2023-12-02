@@ -14,23 +14,18 @@ import java.util.List;
 public class FlightService {
 
     private final FlightRepository flightRepository;
-    private final FlightRouteRepository routeRepository;
 
-    public List<Airport> retrieveAllDepartures() {
-        return routeRepository.findAllDepartures();
-    }
-
-    public List<Airport> retrieveAllArrivals() {
-        return routeRepository.findAllArrivals();
-    }
-
-    public List<Airport> retrieveArrivalsByDeparture(String departureCode) {
-        return routeRepository.findArrivalByDeparture(departureCode);
+    public Flight retrieveOneFlight(Long flightId) {
+        return flightRepository.findOne(flightId);
     }
 
     public List<Flight> retrieveFlightsByRoute(String departureCode, String arrivalCode, LocalDateTime searchDate) {
         List<Flight> flightsByRoute = flightRepository.findFlightsByRoute(departureCode, arrivalCode, searchDate);
         return flightsByRoute;
+    }
+
+    public Seat retrieveOntSeat(Long seatId) {
+        return flightRepository.findSeat(seatId);
     }
 
     public List<Seat> retrieveAllSeatsForFlight(Long flightId) {
