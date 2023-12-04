@@ -2,6 +2,7 @@ package com.abcairline.abc.service;
 
 import com.abcairline.abc.controller.RankingController;
 import com.abcairline.abc.dto.ranking.FlightRouteRanking;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ class RankingServiceTest {
     }
 
     @Test
-    void testGetReservationRanking() {
+    void testGetReservationRanking() throws JsonProcessingException {
         rankingService.recordReservation(1L);
         rankingService.recordReservation(1L);
         rankingService.recordReservation(1L);

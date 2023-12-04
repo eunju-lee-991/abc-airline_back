@@ -49,6 +49,12 @@ public class FlightRepository {
         return em.find(Seat.class, seatId);
     }
 
+
+    public List<Airport> findAllAirports() {
+        return em.createQuery("select ap from Airport ap", Airport.class)
+                .getResultList();
+    }
+
     public List<Airplane> findAllAirplanes() {
         return em.createQuery("select ap from Airplane ap order by model", Airplane.class)
                 .getResultList();

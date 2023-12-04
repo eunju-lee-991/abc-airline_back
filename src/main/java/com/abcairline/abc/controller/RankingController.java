@@ -5,6 +5,7 @@ import com.abcairline.abc.dto.flight.SimpleRouteDto;
 import com.abcairline.abc.dto.ranking.FlightRouteRanking;
 import com.abcairline.abc.service.FlightRouteService;
 import com.abcairline.abc.service.RankingService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +26,15 @@ public class RankingController {
     private final FlightRouteService flightRouteService;
 
     @GetMapping({"/", ""})
-    public List<FlightRouteRanking> getReservationRanking() {
+    public List<FlightRouteRanking> getReservationRanking()  {
         List<Long> rankingList = rankingService.getReservationRanking();
-        List<SimpleRouteDto> simpleRouteDtoList = rankingList.stream().map(routeId -> flightRouteService.retrieveOneRoute(routeId))
+        List<SimpleRouteDto> simpleRouteDtoList = rankingList.stream().map(routeId -> {
+                    try {
+                        return flightRouteService.retrieveRouteDateFromRedis(routeId);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
                 .map(SimpleRouteDto::new).collect(Collectors.toList());
 
         List<FlightRouteRanking> result = new ArrayList<>();
