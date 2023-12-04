@@ -1,16 +1,14 @@
 package com.abcairline.abc.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -29,4 +27,18 @@ public class User {
     private String role;
     @OneToMany(mappedBy = "user")
     List<Reservation> reservations;
+
+    @Builder
+    public User(String email, String name, String imageUrl, boolean socialLoginYn
+            , String provider, String providerId, LocalDateTime signUpDate, LocalDateTime lastAccessDate, String role) {
+        this.email = email;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.socialLoginYn = socialLoginYn;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.signUpDate = signUpDate;
+        this.lastAccessDate = lastAccessDate;
+        this.role = role;
+    }
 }

@@ -1,11 +1,14 @@
 package com.abcairline.abc.controller;
 
 import com.abcairline.abc.controller.constant.OAuthConstants;
+import com.abcairline.abc.controller.constant.ProviderType;
 import com.abcairline.abc.domain.User;
+import com.abcairline.abc.dto.auth.OauthUserInfo;
+import com.abcairline.abc.dto.user.SimpleUserDto;
 import com.abcairline.abc.service.UserService;
+import com.abcairline.abc.service.auth.OauthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
@@ -23,112 +27,52 @@ import java.util.Map;
 @RequestMapping("/api/v1/login")
 @RequiredArgsConstructor
 public class LoginController {
-
-    @Value("${google.client.id}")
-    private String googleClientId;
-
-    @Value("${google.client.secret}")
-    private String googleClientSecret;
-
-    @Value("${google.redirect-uri}")
-    private String googleRedirectUri;
-
-    @Value("${naver.client.id}")
-    private String naverClientId;
-
-    @Value("${naver.client.secret}")
-    private String naverClientSecret;
-
-    @Value("${naver.redirect-uri}")
-    private String naverRedirectUri;
-
-    @Value("${kakao.client.id}")
-    private String kakaoClientId;
-
-    @Value("${kakao.redirect-uri}")
-    private String KaKaoRedirectUri;
-
     private final UserService userService;
+    private final OauthService oauthService;
 
     @GetMapping("/token")
-    public String getToken(@RequestParam(name = "code") String code) throws IOException {
-        log.info("code = " + code);
+    public SimpleUserDto getToken(@RequestParam(name = "code") String code, @RequestParam(name = "provider") String provider) throws IOException {
+        String accessToken = "";
+        OauthUserInfo userInfo = null;
 
-        HttpURLConnection connection = getConnection(OAuthConstants.GOOGLE_GET_TOKEN_URL, "POST", true);
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-        StringBuilder sb = new StringBuilder();
+        if (provider.equals("google")) {
+            accessToken = oauthService.getAccessToken(code, ProviderType.GOOGLE);
+            userInfo = oauthService.getUserInformation(accessToken, ProviderType.GOOGLE);
+        } else if (provider.equals("naver")) {
+            accessToken = oauthService.getAccessToken(code, ProviderType.NAVER);
+            userInfo = oauthService.getUserInformation(accessToken, ProviderType.NAVER);
 
-        sb.append("grant_type=authorization_code");
-        sb.append("&client_id=" + googleClientId);
-        sb.append("&client_secret=" + googleClientSecret);
-        sb.append("&code=" + code);
-        sb.append("&redirect_uri=" + googleRedirectUri);
-        bw.write(sb.toString());
-        bw.flush();
-
-        int responseCode = connection.getResponseCode();
-        log.info("getToken response code : {}", responseCode);
-
-        String result = getResultString(connection.getInputStream());
-
-        JsonParser jsonParser = new JacksonJsonParser();
-
-        Map<String, Object> map = jsonParser.parseMap(result);
-        String accessToken = (String) map.get("access_token");
-        String idToken = (String) map.get("id_token");
-        getUserInfo(accessToken);
-        return "";
-    }
-
-    private void getUserInfo(String accessToken) throws IOException {
-        String url = OAuthConstants.GOOGLE_GET_USERINFO_URL;
-        HttpURLConnection connection = getConnection(url, "GET", true);
-
-        connection.setRequestProperty("Authorization", "Bearer " + accessToken);
-
-        int responseCode = connection.getResponseCode();
-        log.info("getToken response code : {}", responseCode);
-
-        String result = getResultString(connection.getInputStream());
-
-        JsonParser jsonParser = new JacksonJsonParser();
-
-        Map<String, Object> map = jsonParser.parseMap(result);
-        String name = (String)map.get("name");
-        String providerId = (String)map.get("id");
-        System.out.println(name);
-
-        User user = userService.retrieveUserWithProviderAndProviderId("google", providerId);
-        if (user == null) {
-            // 회원가입
-            System.out.println("null");
-        }else {
-            // 로그인
-            System.out.println("not null");
+        } else if (provider.equals("kakao")) {
+            accessToken = oauthService.getAccessToken(code, ProviderType.KAKAO);
+            userInfo = oauthService.getUserInformation(accessToken, ProviderType.KAKAO);
         }
 
-//        userService.saveUser(user);
+        User user = null;
 
-    }
+        if (userInfo != null) {
+            user = userService.retrieveUserWithProviderAndProviderId(userInfo.getProvider(), userInfo.getProviderId());
 
-    private HttpURLConnection getConnection(String string_url, String requestMethod, boolean doOutPut) throws IOException {
-        URL url = new URL(string_url);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod(requestMethod);
-        connection.setDoOutput(doOutPut);
-
-        return connection;
-    }
-
-    private String getResultString(InputStream inputStream) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        String line = "";
-        StringBuilder result = new StringBuilder();
-
-        while ((line = br.readLine()) != null) {
-            result.append(line);
+            if (user == null) {
+                // 회원가입
+                user = User.builder().email(userInfo.getEmail())
+                        .name(userInfo.getName())
+                        .imageUrl(userInfo.getImageUrl())
+                        .socialLoginYn(true)
+                        .provider(userInfo.getProvider())
+                        .providerId(userInfo.getProviderId())
+                        .signUpDate(LocalDateTime.now())
+                        .lastAccessDate(LocalDateTime.now())
+                        .role("ROLE_USER")
+                        .build();
+            }else {
+                // 로그인 (userinfo 업데이트)
+                user.setName(userInfo.getName());
+                user.setImageUrl(userInfo.getImageUrl());
+                user.setLastAccessDate(LocalDateTime.now());
+            }
+            userService.saveUser(user);
         }
 
-        return result.toString();
+        return new SimpleUserDto(user);
     }
 }

@@ -1,7 +1,7 @@
 INSERT INTO user(user_id, social_login_yn, email, name, sign_up_date, last_access_date)
-VALUES (1, 0, 'abc@naver.com', "choco" ,current_date, current_date);
+VALUES (100, 0, 'abc@naver.com', "choco" ,current_date, current_date);
 INSERT INTO user(user_id, social_login_yn, email, name, sign_up_date, last_access_date)
-VALUES (2, 0, 'efg@gmail.com', "egg" ,current_date, current_date);
+VALUES (200, 0, 'efg@gmail.com', "egg" ,current_date, current_date);
 
 
 INSERT INTO airport(IATACode, name, country, continent, city)
@@ -147,20 +147,20 @@ INSERT INTO Coupon (coupon_id, coupon_name, discount_price, valid_days) VALUES (
 INSERT INTO Coupon (coupon_id, coupon_name, discount_price, valid_days) VALUES (101, '10th Anniversary coupon', '2000', 21);
 
 INSERT INTO User_Coupon (user_coupon_id, user_id, coupon_id, used_yn, creation_date, expiration_date)
-VALUES (100, 1, 100, false, current_date, '2023-12-15 23:59:59.000000');
+VALUES (100, 100, 100, false, current_date, '2023-12-15 23:59:59.000000');
 INSERT INTO User_Coupon (user_coupon_id, user_id, coupon_id, used_yn, creation_date, expiration_date)
-VALUES (101, 1, 101, false, current_date, '2023-12-22 23:59:59.000000');
+VALUES (101, 100, 101, false, current_date, '2023-12-22 23:59:59.000000');
 INSERT INTO User_Coupon (user_coupon_id, user_id, coupon_id, used_yn, creation_date, expiration_date)
-VALUES (102, 2, 100, false, current_date, '2023-12-15 23:59:59.000000');
+VALUES (102, 200, 100, false, current_date, '2023-12-15 23:59:59.000000');
 INSERT INTO User_Coupon (user_coupon_id, user_id, coupon_id, used_yn, creation_date, expiration_date)
-VALUES (103, 2, 101, false, current_date, '2023-12-22 23:59:59.000000');
+VALUES (103, 200, 101, false, current_date, '2023-12-22 23:59:59.000000');
 
 INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status, in_flight_meal, luggage, wifi)
-VALUES (10000, 1, 11, 250000, 19, 'CONFIRMED' , 'NONE', 'NONE', 'NONE');
+VALUES (10000, 100, 11, 250000, 19, 'CONFIRMED' , 'NONE', 'NONE', 'NONE');
 INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status, in_flight_meal, luggage, wifi)
-VALUES (10001, 1, 1, 350000, 5, 'PENDING','NONE','NONE','NONE');
+VALUES (10001, 100, 1, 350000, 5, 'PENDING','NONE','NONE','NONE');
 
 INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
-VALUES (10002, 2, 1, 350000, 17, 'PENDING');
+VALUES (10002, 200, 1, 350000, 17, 'PENDING');
 INSERT INTO reservation (id, user_id, flight_id, reservation_price, seat_id, status)
-VALUES (10003, 2, 1, 410000, 18, 'PENDING');
+VALUES (10003, 200, 1, 410000, 18, 'PENDING');
