@@ -40,6 +40,7 @@ class ReservationServiceTest {
 
     @Test
     @Transactional
+    @Rollback(value = false)
     void testCreateReservation() throws JsonProcessingException {
         Reservation reservation = new Reservation();
         Assertions.assertThat(reservation.getId()).isNull();

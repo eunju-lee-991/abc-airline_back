@@ -4,6 +4,7 @@ import com.abcairline.abc.domain.*;
 import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import com.abcairline.abc.exception.InvalidReservationStateException;
 import com.abcairline.abc.exception.ReservationNotExecuteException;
+import com.abcairline.abc.exception.UnavailableSeatException;
 import com.abcairline.abc.repository.FlightRepository;
 import com.abcairline.abc.repository.ReservationRepository;
 import com.abcairline.abc.repository.UserRepository;
@@ -39,6 +40,9 @@ public class ReservationService {
         Flight flight = flightService.retrieveOneFlight(flightId);
         Seat seat = flightService.retrieveOntSeat(seatId);
 
+        if (!seat.isAvailable()) {
+            throw new UnavailableSeatException("This seat is already reserved");
+        }
 
         seat.reserveSeat();
         reservation.setUser(user);
