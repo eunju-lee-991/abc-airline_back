@@ -6,9 +6,11 @@ import com.abcairline.abc.domain.UserCoupon;
 import com.abcairline.abc.dto.user.UserInfoDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,5 +48,15 @@ public class UserRepository {
             return em.find(UserCoupon.class, userCouponId);
         }
 
+    }
+
+    public User findOneWithProviderAndProviderId(String provider, String providerId) {
+        Optional<User> optionalUser = Optional.ofNullable(DataAccessUtils.uniqueResult(em.createQuery(
+                        "SELECT u FROM User u WHERE u.provider = :provider AND u.providerId = :providerId", User.class)
+                .setParameter("provider", provider)
+                .setParameter("providerId", providerId)
+                .getResultList()));
+
+        return optionalUser.isPresent() ? optionalUser.get() : null;
     }
 }

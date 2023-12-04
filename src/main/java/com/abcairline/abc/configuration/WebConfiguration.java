@@ -9,11 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new StringToInFlightMealConverter());
-        registry.addConverter(new InFlightMealToStringConverter());
-    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
