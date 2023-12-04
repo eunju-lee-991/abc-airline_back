@@ -12,6 +12,8 @@ import com.abcairline.abc.service.ReservationService;
 import com.abcairline.abc.service.TempReservationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -39,7 +41,7 @@ public class ReservationController {
 
     // 예약 저장
     @PostMapping("/users/{userId}/reservations")
-    public Long saveReservation(@PathVariable Long userId, CreateReservationRequest request) throws JsonProcessingException {
+    public ResponseEntity<Long> saveReservation(@PathVariable Long userId, CreateReservationRequest request) throws JsonProcessingException {
         Reservation reservation = new Reservation();
         reservation.setAncillaryService(AncillaryService.createAncillaryService(request.getInFlightMeal(), request.getLuggage(), request.getWifi()));
         reservation.setReservationPrice(request.getReservationPrice());
@@ -53,7 +55,7 @@ public class ReservationController {
         // 예약 순위 데이터 저장 (route를 저장)
         rankingService.recordReservation(reservation.getFlight().getRoute().getId());
 
-        return reservation.getId();
+        return new ResponseEntity<>(reservation.getId(), HttpStatus.CREATED);
     }
 
     // one reservation
