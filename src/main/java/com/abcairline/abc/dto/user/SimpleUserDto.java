@@ -1,8 +1,6 @@
 package com.abcairline.abc.dto.user;
 
 import com.abcairline.abc.domain.User;
-import com.abcairline.abc.domain.enumeration.ReservationStatus;
-import com.abcairline.abc.dto.reservation.ReservationCountDto;
 import lombok.Data;
 
 import java.time.format.DateTimeFormatter;

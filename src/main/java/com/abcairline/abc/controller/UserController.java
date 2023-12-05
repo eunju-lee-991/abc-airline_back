@@ -25,8 +25,6 @@ public class UserController {
     private final TempReservationService tempReservationService;
     private final UserService userService;
 
-
-
     @GetMapping("/{userId}")
     public UserInfoDto findOneUser(@PathVariable Long userId) {
         User user = userService.retrieveOneUserWithReservation(userId);

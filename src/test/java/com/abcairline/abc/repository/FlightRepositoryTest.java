@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +25,7 @@ class FlightRepositoryTest {
 
     @Test
     void testGetFlightsByRoute() {
-        List<Flight> flights = flightRepository.findFlightsByRoute("NRT", "ICN", null);
+        List<Flight> flights = flightRepository.findFlightsByRoute("NRT", "ICN", LocalDateTime.now().plusDays(11));
         Assertions.assertThat(flights.size()).isEqualTo(2);
         flights.forEach(f -> System.out.println(f.getFlightNumber()));
     }

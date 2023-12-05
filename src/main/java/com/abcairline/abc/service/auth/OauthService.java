@@ -2,7 +2,6 @@ package com.abcairline.abc.service.auth;
 
 import com.abcairline.abc.controller.constant.OAuthConstants;
 import com.abcairline.abc.controller.constant.ProviderType;
-import com.abcairline.abc.domain.User;
 import com.abcairline.abc.dto.auth.OauthUserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

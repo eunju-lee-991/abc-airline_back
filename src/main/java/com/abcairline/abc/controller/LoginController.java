@@ -1,26 +1,24 @@
 package com.abcairline.abc.controller;
 
-import com.abcairline.abc.controller.constant.OAuthConstants;
 import com.abcairline.abc.controller.constant.ProviderType;
+import com.abcairline.abc.domain.JWToken;
 import com.abcairline.abc.domain.User;
 import com.abcairline.abc.dto.auth.OauthUserInfo;
 import com.abcairline.abc.dto.user.SimpleUserDto;
 import com.abcairline.abc.service.UserService;
+import com.abcairline.abc.service.auth.JwtService;
 import com.abcairline.abc.service.auth.OauthService;
+import com.abcairline.abc.service.auth.constant.JwtConstants;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.json.JacksonJsonParser;
-import org.springframework.boot.json.JsonParser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -29,9 +27,11 @@ import java.util.Map;
 public class LoginController {
     private final UserService userService;
     private final OauthService oauthService;
+    private final JwtService jwtService;
 
     @GetMapping("/token")
-    public SimpleUserDto getToken(@RequestParam(name = "code") String code, @RequestParam(name = "provider") String provider) throws IOException {
+    public SimpleUserDto getToken(@RequestParam(name = "code") String code, @RequestParam(name = "provider") String provider
+                                    , HttpServletResponse response) throws IOException {
         String accessToken = "";
         OauthUserInfo userInfo = null;
 
@@ -65,13 +65,16 @@ public class LoginController {
                         .role("ROLE_USER")
                         .build();
             }else {
-                // 로그인 (userinfo 업데이트)
+                // 로그인 (최신 사용자 정보로 업데이트)
                 user.setName(userInfo.getName());
                 user.setImageUrl(userInfo.getImageUrl());
                 user.setLastAccessDate(LocalDateTime.now());
             }
             userService.saveUser(user);
         }
+
+        JWToken token = jwtService.createToken(user);
+        response.addHeader(JwtConstants.HEADER_AUTHORIZATION, JwtConstants.TOKEN_PREFIX + token.getAccessToken());
 
         return new SimpleUserDto(user);
     }

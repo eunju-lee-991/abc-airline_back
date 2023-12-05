@@ -11,6 +11,7 @@ import com.abcairline.abc.service.RankingService;
 import com.abcairline.abc.service.ReservationService;
 import com.abcairline.abc.service.TempReservationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class ReservationController {
 
     // 예약 저장
     @PostMapping("/users/{userId}/reservations")
-    public ResponseEntity<Long> saveReservation(@PathVariable Long userId, CreateReservationRequest request) throws JsonProcessingException {
+    public ResponseEntity<Long> saveReservation(@PathVariable Long userId, @Valid CreateReservationRequest request) throws JsonProcessingException {
         Reservation reservation = new Reservation();
         reservation.setAncillaryService(AncillaryService.createAncillaryService(request.getInFlightMeal(), request.getLuggage(), request.getWifi()));
         reservation.setReservationPrice(request.getReservationPrice());
@@ -88,7 +89,7 @@ public class ReservationController {
     }
 
     @PutMapping("/reservations/{reservationId}")
-    public SimpleReservationDto updateReservation(@PathVariable("reservationId") Long reservationId, UpdateReservationRequest request) {
+    public SimpleReservationDto updateReservation(@PathVariable("reservationId") Long reservationId, @Valid UpdateReservationRequest request) {
         AncillaryService ancillaryService = AncillaryService.createAncillaryService(request.getInFlightMeal(), request.getLuggage(), request.getWifi());
         reservationService.updateReservation(reservationId, ancillaryService, request.getSeatId());
 
@@ -115,7 +116,7 @@ public class ReservationController {
     }
 
     @PostMapping("/users/{userId}/reservations/temp-data")
-    public void saveTempReservation(@PathVariable Long userId, TempDataRequest request) throws JsonProcessingException {
+    public void saveTempReservation(@PathVariable Long userId, @Valid TempDataRequest request) throws JsonProcessingException {
         if (userId != null && request.getFlightId() != null) {
             Map<String, String> map = new HashMap<>();
             map.put("seatId", String.valueOf(request.getSeatId()));

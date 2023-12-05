@@ -7,6 +7,7 @@ import com.abcairline.abc.exception.InvalidPaymentException;
 import com.abcairline.abc.service.PayService;
 import com.abcairline.abc.service.ReservationService;
 import com.abcairline.abc.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class PayController {
 
     // 결제 정보 전송
     @PostMapping("/")
-    public Long payForReservation(@PathVariable Long reservationId, @RequestBody PaymentRequest request) {
+    public Long payForReservation(@PathVariable Long reservationId, @Valid @RequestBody PaymentRequest request) {
         Payment payment = new Payment();
         if (request.getPaymentMethod() == null) {
             throw new InvalidPaymentException();
