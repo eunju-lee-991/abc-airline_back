@@ -11,6 +11,10 @@ import com.abcairline.abc.service.RankingService;
 import com.abcairline.abc.service.ReservationService;
 import com.abcairline.abc.service.TempReservationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Tag(name = "항공편 예약 API", description = "항공편 예약 관련 API")
 public class ReservationController {
     private final ReservationService reservationService;
     private final TempReservationService tempReservationService;
@@ -36,12 +41,16 @@ public class ReservationController {
 
     // 부가서비스 페이지
     @GetMapping("/reservations/ancillary-services")
+    @Operation(summary = "부가서비스 목록", description = "항공사에서 제공하는 부가서비스(기내식/수하물/와이파이) 목록 조회")
     public AncillaryServiceListDto getAncillaryServices() throws JsonProcessingException {
         return new AncillaryServiceListDto();
     }
 
     // 예약 저장
     @PostMapping("/users/{userId}/reservations")
+    @Operation(summary = "예약", description = "예약 저장/임시 저장된 예약 데이터 삭제/실시간 예약 순위 데이터 반영")
+    @RequestBody(required = true
+            , description = "항공편 번호/부가서비스/예약 금액/좌석 번호")
     public ResponseEntity<Long> saveReservation(@PathVariable Long userId, @Valid CreateReservationRequest request) throws JsonProcessingException {
         Reservation reservation = new Reservation();
         reservation.setAncillaryService(AncillaryService.createAncillaryService(request.getInFlightMeal(), request.getLuggage(), request.getWifi()));
@@ -61,13 +70,15 @@ public class ReservationController {
 
     // one reservation
     @GetMapping("/reservations/{reservationId}")
-    public ReservationDto findReservation(@PathVariable Long reservationId) {
+    @Operation(summary = "예약 단건 조회", description = "공항 및 비행기 기종을 포함한 구체적인 예약 정보 조회")
+    public ReservationDto findReservation(@PathVariable(name = "reservationId") Long reservationId) {
         Reservation reservation = reservationService.retrieveReservationWithAllInformation(reservationId);
         return new ReservationDto(reservation);
     }
 
     // all reservation
     @GetMapping("/reservations")
+    @Operation(summary = "전체 예약 조회", description = "전체 예약 정보 조회")
     public SimpleReservationListDto findAllReservation() {
         List<Reservation> reservations = reservationService.retrieveAllReservations();
         SimpleReservationListDto dto = new SimpleReservationListDto();
@@ -79,7 +90,8 @@ public class ReservationController {
 
     // user's all reservations
     @GetMapping("/users/{userId}/reservations")
-    public ReservationResultListDto findReservationsForUser(@PathVariable Long userId) {
+    @Operation(summary = "특정 사용자의 전체 예약 조회", description = "특정 사용자의 전체 예약 정보 조회")
+    public ReservationResultListDto findReservationsForUser(@PathVariable(name = "userId") Long userId) {
         List<Reservation> reservationList = reservationService.retrieveReservationsForUser(userId);
         ReservationResultListDto result = new ReservationResultListDto();
         result.setCount(reservationList.size());
@@ -89,6 +101,8 @@ public class ReservationController {
     }
 
     @PutMapping("/reservations/{reservationId}")
+    @Operation(summary = "예약 변경", description = "결제 대기 중인 예약 건의 부가서비스/좌석 변경")
+    @RequestBody(required = true, description = "부가서비스/좌석 정보")
     public SimpleReservationDto updateReservation(@PathVariable("reservationId") Long reservationId, @Valid UpdateReservationRequest request) {
         AncillaryService ancillaryService = AncillaryService.createAncillaryService(request.getInFlightMeal(), request.getLuggage(), request.getWifi());
         reservationService.updateReservation(reservationId, ancillaryService, request.getSeatId());
@@ -98,6 +112,7 @@ public class ReservationController {
     }
 
     @PostMapping("/reservations/{reservationId}/cancel")
+    @Operation(summary = "예약 취소", description = "결제 대기 중인 예약 건의 취소")
     public SimpleReservationDto cancelReservation(@PathVariable("reservationId") Long reservationId) {
         reservationService.cancelReservation(reservationId);
         Reservation reservation = reservationService.retrieveReservationWithAllInformation(reservationId);
@@ -106,7 +121,9 @@ public class ReservationController {
     }
 
     @GetMapping("/users/{userId}/reservations/temp-data")
-    public TempReservationDto getTempReservation(@PathVariable Long userId, @RequestParam Long flightId) throws JsonProcessingException {
+    @Operation(summary = "진행 중인 예약 조회", description = "임시 저장된 예약 건의 부가서비스/좌석 데이터 조회")
+    @Parameter(name = "flightId", description = "예약 진행 중인 항공편 번호")
+    public TempReservationDto getTempReservation(@PathVariable(name = "userId") Long userId, @RequestParam(name = "flightId") Long flightId) throws JsonProcessingException {
         Map<String, String> map = new HashMap<>(); // TempData DTO!?
         if (userId != null && flightId != null) {
             map = tempReservationService.getValue(userId, flightId);
@@ -116,7 +133,9 @@ public class ReservationController {
     }
 
     @PostMapping("/users/{userId}/reservations/temp-data")
-    public void saveTempReservation(@PathVariable Long userId, @Valid TempDataRequest request) throws JsonProcessingException {
+    @Operation(summary = "진행 중인 예약 저장", description = "해당 항공편에 대한 부가서비스/좌석 임시 저장")
+    @RequestBody(description = "항공편 번호/부가서비스/좌석")
+    public void saveTempReservation(@PathVariable(name = "userId") Long userId, @Valid TempDataRequest request) throws JsonProcessingException {
         if (userId != null && request.getFlightId() != null) {
             Map<String, String> map = new HashMap<>();
             map.put("seatId", String.valueOf(request.getSeatId()));

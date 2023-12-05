@@ -2,6 +2,7 @@ package com.abcairline.abc.service;
 
 import com.abcairline.abc.domain.User;
 import com.abcairline.abc.domain.UserCoupon;
+import com.abcairline.abc.exception.NotExistUserException;
 import com.abcairline.abc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,15 +17,15 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User retrieveOneUser(Long id) {
+        User user = userRepository.findOne(id);
+        if (user == null) {
+            throw new NotExistUserException();
+        }
         return userRepository.findOne(id);
     }
 
     public User retrieveUserWithProviderAndProviderId(String provider, String providerId) {
         return userRepository.findOneWithProviderAndProviderId(provider, providerId);
-    }
-
-    public User retrieveOneUserWithReservation(Long userId) {
-        return userRepository.findOneWithReservation(userId);
     }
 
     public List<User> retrieveAllUsers() {
@@ -43,8 +44,4 @@ public class UserService {
     public void saveUser(User user) {
         userRepository.save(user);
     }
-
-//    public Long updateUser(User user) {
-//        return null;
-//    }
 }

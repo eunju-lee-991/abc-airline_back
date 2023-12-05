@@ -29,13 +29,6 @@ public class UserRepository {
         return em.createQuery("select u from User u", User.class).getResultList();
     }
 
-    public User findOneWithReservation(Long userId) {
-        return em.createQuery(
-                        "SELECT u FROM User u WHERE u.id = :userId", User.class)
-                .setParameter("userId", userId)
-                .getSingleResult();
-    }
-
     public List<UserCoupon> findUserCouponsForUser(Long userId) {
         return em.createQuery(
                         "SELECT uc FROM UserCoupon uc WHERE uc.user.id = :userId", UserCoupon.class)
