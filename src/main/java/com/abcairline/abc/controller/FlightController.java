@@ -20,11 +20,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/v1/flights")
 @Tag(name = "항공편 API", description = "항공사의 항공편 API")
 public class FlightController {
@@ -102,15 +106,16 @@ public class FlightController {
     @Operation(summary = "전체 항공편", description = "해당 노선에 대한 운행 항공편")
     @Parameter(name = "departure", description = "출발지 공항의 IATA 코드")
     @Parameter(name = "arrival", description = "도착지 공항의 IATA 코드")
-    @Parameter(name = "date", description = "출발 일자(출발 일자로부터 2일 전후의 항공편 조회)")
+    @Parameter(name = "date", description = "출발 일자(출발 일자로부터 2일 전후의 항공편 조회) yyyyMMdd 형식으로 요청")
     public FlightResultListDto findFlights(@RequestParam(name = "departure") String departure, @RequestParam(name = "arrival") String arrival, @RequestParam(name = "date") String date) {
-        System.out.println(date);
+        log.info("date: {}", date);
 
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse(date);
-        ZonedDateTime seoulDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        LocalDateTime searchTime = seoulDateTime.toLocalDateTime();
+        // DateTimeFormatter를 이용한 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDateTime localDateTime = LocalDate.parse(date, formatter).atStartOfDay();
+        log.info("localDateTime: {}", localDateTime);
 
-        List<Flight> list = flightService.retrieveFlightsByRoute(departure, arrival, searchTime);
+        List<Flight> list = flightService.retrieveFlightsByRoute(departure, arrival, localDateTime);
         FlightResultListDto result = new FlightResultListDto();
         result.setCount(list.size());
         result.setData(list.stream().map(FlightDto::new).collect(Collectors.toList()));
