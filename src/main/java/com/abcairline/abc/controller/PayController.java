@@ -48,7 +48,10 @@ public class PayController {
     @Operation(summary = "결제 정보", description = "완료된 결제에 대한 정보")
     public PaymentDto getPaymentInfo(@PathVariable("paymentId") Long paymentId) {
         Payment payment = payService.retrieveOnePayment(paymentId);
-
-        return payment != null ? new PaymentDto(payment) : null ;
+        PaymentDto result = null;
+        if (payment != null) {
+            result = new PaymentDto(payment);
+        }
+        return result;
     }
 }

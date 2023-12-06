@@ -22,6 +22,7 @@ public class PayRepository {
         Optional<Payment> optionalPayment = Optional.ofNullable(DataAccessUtils.uniqueResult(
                 em.createQuery("select p from Payment p" +
                         " left join fetch p.userCoupon uc" +
+                        " join fetch uc.coupon c" +
                         " where p.id = :paymentId", Payment.class)
                 .setParameter("paymentId", paymentId)
                 .getResultList()));

@@ -1,6 +1,5 @@
 package com.abcairline.abc.dto.reservation;
 
-import com.abcairline.abc.domain.AncillaryService;
 import com.abcairline.abc.domain.Reservation;
 import com.abcairline.abc.domain.enumeration.converter.InFlightMealToStringConverter;
 import com.abcairline.abc.domain.enumeration.converter.LuggageWeightToStringConverter;

@@ -95,6 +95,9 @@ public class ReservationService {
         if (findOne.getStatus() == ReservationStatus.PENDING) {
             findOne.updateAncillaryService(ancillaryService);
             Seat seat = flightRepository.findSeat(seatId);
+            if (!seat.isAvailable()) {
+                throw new UnavailableSeatException("Unavailable seat");
+            }
             findOne.updateSeat(seat);
         } else {
             log.info("You cannot update your reservation in this status");

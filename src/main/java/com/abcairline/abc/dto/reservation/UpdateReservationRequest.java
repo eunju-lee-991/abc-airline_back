@@ -9,6 +9,6 @@ public class UpdateReservationRequest {
     private String inFlightMeal;
     private String luggage;
     private String wifi;
-    @NotNull @NotEmpty
+    @NotNull
     private Long seatId;
 }

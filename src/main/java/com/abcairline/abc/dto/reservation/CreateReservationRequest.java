@@ -8,7 +8,7 @@ import lombok.NonNull;
 
 @Data
 public class CreateReservationRequest {
-    @NotNull @NotEmpty
+    @NotNull
     private Long flightId;
 
     private String inFlightMeal;
@@ -17,6 +17,6 @@ public class CreateReservationRequest {
 
     @Positive
     private int reservationPrice;
-    @NotNull @NotEmpty
+    @NotNull
     private Long seatId;
 }
