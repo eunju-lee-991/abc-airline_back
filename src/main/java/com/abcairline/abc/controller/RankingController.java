@@ -32,13 +32,8 @@ public class RankingController {
     @Operation(summary = "실시간 예약 순위", description = "1~10위까지의 예약 순위에 해당하는 노선 정보 조회 ")
     public List<FlightRouteRanking> getReservationRanking()  {
         List<Long> rankingList = rankingService.getReservationRanking();
-        List<SimpleRouteDto> simpleRouteDtoList = rankingList.stream().map(routeId -> {
-                    try {
-                        return flightRouteService.retrieveRouteDataFromRedis(routeId);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+
+        List<SimpleRouteDto> simpleRouteDtoList = rankingList.stream().map(routeId -> flightRouteService.retrieveOneRoute(routeId))
                 .map(SimpleRouteDto::new).collect(Collectors.toList());
 
         List<FlightRouteRanking> result = new ArrayList<>();
@@ -50,3 +45,5 @@ public class RankingController {
         return result;
     }
 }
+
+
