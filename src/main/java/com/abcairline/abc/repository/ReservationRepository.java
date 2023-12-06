@@ -51,7 +51,15 @@ public class ReservationRepository {
 
     public List<Reservation> findAllForUser(Long userId) {
         return em.createQuery(
-                        "SELECT r FROM Reservation r WHERE r.user.id = :userId", Reservation.class)
+                        "SELECT r FROM Reservation r" +
+                                " join fetch r.user u" +
+                                " join fetch r.flight f" +
+                                " join fetch f.route fr" +
+                                " join fetch fr.departure da" +
+                                " join fetch fr.arrival aa" +
+                                " join fetch f.airplane ap" +
+                                " join fetch r.seat s" +
+                                " WHERE r.user.id = :userId", Reservation.class)
                 .setParameter("userId", userId)
                 .getResultList();
     }
