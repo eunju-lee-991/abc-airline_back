@@ -44,21 +44,19 @@ public class JwtVerificationFilter extends BasicAuthenticationFilter {
                 jwtTokenVerifier = new JwtTokenVerifier(JwtConstants.SECRET_KEY);
                 DecodedJWT decodedJWT = jwtTokenVerifier.verify(accessToken);
                 Long id = Long.parseLong(decodedJWT.getSubject());
-
-                Authentication authentication = null;
+                Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
                 if (id != null) {
                     User user = userRepository.findOne(id);
-                    Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
-                    if (user != null)
+                    if (user != null) {
                         authorities.add(() -> user.getRole());
-                        authentication = new UsernamePasswordAuthenticationToken(id, null, authorities);
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(id, null, authorities);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
                 chain.doFilter(request, response);
-            } catch (InvalidJwtTokenException ex) {
+            } catch (Exception ex) {
                 log.error(ex.getMessage());
                 setUnauthorizedResponse(response);
             }

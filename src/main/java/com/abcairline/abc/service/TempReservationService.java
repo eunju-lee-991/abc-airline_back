@@ -26,7 +26,7 @@ public class TempReservationService {
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
 
-    // 값 저장
+    // 데이터 저장
     public void setValue(Long userId, Long flightId, Map<String, String> map) throws JsonProcessingException {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
 
@@ -37,7 +37,7 @@ public class TempReservationService {
         }
     }
 
-    // 값 조회
+    //데이터 조회
     public Map<String, String> getValue(Long userId, Long flightId) throws JsonProcessingException {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
 
@@ -45,7 +45,7 @@ public class TempReservationService {
         return value == null ? null : objectMapper.readValue(value, new TypeReference<>() {});
     }
 
-    // userId에 들어있는 fligt 조회
+    // userId에 들어있는 fligtId 조회
     public List<Long> getTempReservation(Long userId) {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
         Map<Object, Object> entries = userId != null ? hashOperations.entries(String.valueOf(userId))

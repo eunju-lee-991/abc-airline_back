@@ -55,24 +55,14 @@ public class LoginController {
         }
 
         User user = null;
-
         if (userInfo != null) {
             user = userService.retrieveUserWithProviderAndProviderId(userInfo.getProvider(), userInfo.getProviderId());
 
-            if (user == null) {
-                // 회원가입
-                user = User.builder().email(userInfo.getEmail())
-                        .name(userInfo.getName())
-                        .imageUrl(userInfo.getImageUrl())
-                        .socialLoginYn(true)
-                        .provider(userInfo.getProvider())
-                        .providerId(userInfo.getProviderId())
-                        .signUpDate(LocalDateTime.now())
-                        .lastAccessDate(LocalDateTime.now())
-                        .role("ROLE_USER")
+            if (user == null) { // 회원가입
+                user = User.builder().email(userInfo.getEmail()).name(userInfo.getName()).imageUrl(userInfo.getImageUrl()).socialLoginYn(true).provider(userInfo.getProvider()).providerId(userInfo.getProviderId())
+                        .signUpDate(LocalDateTime.now()).lastAccessDate(LocalDateTime.now()).role("ROLE_USER")
                         .build();
-            }else {
-                // 로그인 (최신 사용자 정보로 업데이트)
+            }else { // 로그인 (최신 사용자 정보로 업데이트)
                 user.setName(userInfo.getName());
                 user.setImageUrl(userInfo.getImageUrl());
                 user.setLastAccessDate(LocalDateTime.now());

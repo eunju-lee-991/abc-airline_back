@@ -30,7 +30,7 @@ public class Reservation {
 
     private int reservationPrice;
 
-    @OneToOne
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "seat_id")
     private Seat seat;
 

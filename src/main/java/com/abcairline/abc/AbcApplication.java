@@ -20,7 +20,7 @@ public class AbcApplication {
 	@Bean
 	public CommandLineRunner loadData() {
 		return args -> {
-			routeService.loadRouteDateToRedis();
+			routeService.loadRouteDataToRedis();
 		};
 	}
 }

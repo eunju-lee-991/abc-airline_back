@@ -35,7 +35,7 @@ public class FlightRouteService {
         return routeRepository.findArrivalByDeparture(departureCode);
     }
 
-    public void loadRouteDateToRedis() throws JsonProcessingException {
+    public void loadRouteDataToRedis() throws JsonProcessingException {
         List<FlightRoute> routes = routeRepository.findAll();
         for (FlightRoute fr : routes) {
             String value = objectMapper.writeValueAsString(fr);
@@ -43,7 +43,7 @@ public class FlightRouteService {
         }
     }
 
-    public FlightRoute retrieveRouteDateFromRedis(Long routeId) throws JsonProcessingException {
+    public FlightRoute retrieveRouteDataFromRedis(Long routeId) throws JsonProcessingException {
         String value = (String) redisTemplate.opsForHash().get(ROUTE_KEY, String.valueOf(routeId));
         FlightRoute flightRoute = objectMapper.readValue(value, FlightRoute.class);
 

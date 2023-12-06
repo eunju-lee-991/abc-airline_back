@@ -3,6 +3,7 @@ package com.abcairline.abc.service;
 import com.abcairline.abc.domain.*;
 import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import com.abcairline.abc.exception.InvalidReservationStateException;
+import com.abcairline.abc.exception.NotExistReservationException;
 import com.abcairline.abc.exception.ReservationNotExecuteException;
 import com.abcairline.abc.exception.UnavailableSeatException;
 import com.abcairline.abc.repository.FlightRepository;
@@ -29,11 +30,11 @@ public class ReservationService {
     // 예약 저장
     public void createReservation(Reservation reservation, Long userId, Long flightId, Long seatId) {
         if (userId == null || flightId == null) {
-            throw new ReservationNotExecuteException("no user id or no flight id");
+            throw new ReservationNotExecuteException("User Id or Flight Id is empty");
         }
 
         if (seatId == null) {
-            throw new ReservationNotExecuteException("no seat selected");
+            throw new ReservationNotExecuteException("No seat selected");
         }
 
         User user = userService.retrieveOneUser(userId);
@@ -59,7 +60,11 @@ public class ReservationService {
 
     // 단건 예약 detail 조회
     public Reservation retrieveReservationWithAllInformation(Long reservationId) {
-        return reservationRepository.findOneWithAllInformation(reservationId);
+        Reservation findOne = reservationRepository.findOneWithAllInformation(reservationId);
+        if (findOne == null) {
+            throw new NotExistReservationException("존재하지 않는 예약 번호입니다.");
+        }
+        return findOne;
     }
 
     // 전체 예약 조회
@@ -68,11 +73,6 @@ public class ReservationService {
     }
 
     // 특정 회원 예약 조회
-
-    /**
-     * 상태 조건 주기!
-     * condition for reservation status
-     */
     public List<Reservation> retrieveReservationsForUser(Long userId) {
         return reservationRepository.findAllForUser(userId);
     }
@@ -97,7 +97,7 @@ public class ReservationService {
             Seat seat = flightRepository.findSeat(seatId);
             findOne.updateSeat(seat);
         } else {
-            log.info("you can not update your reservation");
+            log.info("You cannot update your reservation in this status");
             throw new InvalidReservationStateException();
         }
     }
@@ -110,10 +110,10 @@ public class ReservationService {
             reservation.getSeat().cancelSeat();
             reservation.setStatus(ReservationStatus.CANCEL);
         } else if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
-            log.error("already confirmed");
+            log.error("Your reservation is already confirmed");
             throw new InvalidReservationStateException();
         } else {
-            log.error("already canceled");
+            log.error("Your reservation is already canceled");
             throw new InvalidReservationStateException();
         }
     }

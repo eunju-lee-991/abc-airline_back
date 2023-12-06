@@ -33,6 +33,9 @@ public class UserController {
     @Operation(summary = "특정 사용자 조회", description = "기본 사용자 정보와 사용자의 예약 관련 카운트 조회")
     public UserInfoDto findOneUser(@PathVariable(name = "userId") Long userId) {
         User user = userService.retrieveOneUser(userId);
+        System.out.println("11111111111111111");
+        System.out.println(user.getReservations().get(0));
+        System.out.println("22222222222222222222");
         List<Long> tempReservations = tempReservationService.getTempReservation(userId);
         int tempReservationCount = tempReservations != null ? tempReservations.size() : 0 ;
 
@@ -44,12 +47,16 @@ public class UserController {
     public List<UserInfoDto> findAllUsers() {
         List<User> users = userService.retrieveAllUsers();
         List<UserInfoDto> result = new ArrayList<>();
-        for (User user : users) {
-            List<Long> tempReservations = tempReservationService.getTempReservation(user.getId());
-            int tempReservationCount = tempReservations != null ? tempReservations.size() : 0 ;
 
-            result.add(new UserInfoDto(user, tempReservationCount));
+        if (users != null) {
+            for (User user : users) {
+                List<Long> tempReservations = tempReservationService.getTempReservation(user.getId());
+                int tempReservationCount = tempReservations != null ? tempReservations.size() : 0 ;
+
+                result.add(new UserInfoDto(user, tempReservationCount));
+            }
         }
+
         return result;
     }
 

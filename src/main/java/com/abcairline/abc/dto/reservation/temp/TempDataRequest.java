@@ -7,7 +7,7 @@ import lombok.NonNull;
 
 @Data
 public class TempDataRequest {
-    @NotNull @NotEmpty
+    @NotNull
     private Long flightId;
 
     private Long seatId;

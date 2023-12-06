@@ -24,7 +24,7 @@ public class PayService {
     @Transactional
     public void pay(Payment payment, Long reservationId, Long userCouponId) {
         Reservation reservation = reservationService.retrieveReservation(reservationId);
-        if (reservation == null){
+        if (reservation == null) {
             throw new NotExistReservationException();
         }
 
@@ -35,12 +35,14 @@ public class PayService {
 
         if (userCouponId != null) {
             UserCoupon userCoupon = userService.retrieveOneUserCoupon(userCouponId);
-            if(!userCoupon.isUsedYn()){
-                userCoupon.useCoupon();
-                payment.setUserCoupon(userCoupon);
-                payment.setDiscountPrice(userCoupon.getCoupon().getDiscountPrice());
-           }else {
-                log.warn("already used coupon");
+            if (userCoupon != null) {
+                if (!userCoupon.isUsedYn()) {
+                    userCoupon.useCoupon();
+                    payment.setUserCoupon(userCoupon);
+                    payment.setDiscountPrice(userCoupon.getCoupon().getDiscountPrice());
+                } else {
+                    log.warn("already used coupon");
+                }
             }
         }
 

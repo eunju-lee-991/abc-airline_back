@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,7 +22,7 @@ public class UserService {
         if (user == null) {
             throw new NotExistUserException();
         }
-        return userRepository.findOne(id);
+        return user;
     }
 
     public User retrieveUserWithProviderAndProviderId(String provider, String providerId) {
@@ -33,11 +34,23 @@ public class UserService {
     }
 
     public List<UserCoupon> retrieveUserCoupons(Long userId) {
+        User user = retrieveOneUser(userId);
+
+        if (user == null) {
+            throw new NotExistUserException();
+        }
+
         return userRepository.findUserCouponsForUser(userId);
     }
 
     public UserCoupon retrieveOneUserCoupon(Long userCouponId) {
-        return userRepository.findUserOneCoupon(userCouponId);
+        UserCoupon userCoupon = userRepository.findUserOneCoupon(userCouponId);
+
+        if (userCoupon == null) {
+            System.out.println("Coupon is not exist");
+        }
+
+        return userCoupon;
     }
 
     @Transactional

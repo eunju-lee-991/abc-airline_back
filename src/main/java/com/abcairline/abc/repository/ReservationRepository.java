@@ -1,12 +1,15 @@
 package com.abcairline.abc.repository;
 
 import com.abcairline.abc.domain.Reservation;
+import com.abcairline.abc.domain.User;
 import com.abcairline.abc.domain.enumeration.ReservationStatus;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,7 +26,9 @@ public class ReservationRepository {
     }
 
     public Reservation findOneWithAllInformation(Long reservationId) {
-        return em.createQuery(
+        Optional<Reservation> optionalReservation
+                = Optional.ofNullable( DataAccessUtils.uniqueResult(
+                        em.createQuery(
                         "select r from Reservation r" +
                                 " join fetch r.user u" +
                                 " join fetch r.flight f" +
@@ -34,7 +39,10 @@ public class ReservationRepository {
                                 " join fetch r.seat s" +
                                 " WHERE r.id = :reservationId"
                         , Reservation.class)
-                .setParameter("reservationId", reservationId).getSingleResult();
+                .setParameter("reservationId", reservationId)
+                .getResultList()));
+
+        return optionalReservation.isPresent() ? optionalReservation.get() : null;
     }
     public List<Reservation> findAll() {
         return em.createQuery("select r from Reservation r " +
@@ -46,7 +54,6 @@ public class ReservationRepository {
                         "SELECT r FROM Reservation r WHERE r.user.id = :userId", Reservation.class)
                 .setParameter("userId", userId)
                 .getResultList();
-
     }
 
     public Integer countAllReservationsForUser(Long userId, ReservationStatus status) {

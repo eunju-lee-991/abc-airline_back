@@ -4,7 +4,10 @@ import com.abcairline.abc.domain.Payment;
 import com.abcairline.abc.domain.User;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -16,9 +19,13 @@ public class PayRepository {
     }
 
     public Payment findOne(Long paymentId) {
-        return em.createQuery("select p from Payment p" +
+        Optional<Payment> optionalPayment = Optional.ofNullable(DataAccessUtils.uniqueResult(
+                em.createQuery("select p from Payment p" +
                         " left join fetch p.userCoupon uc" +
-                        " where p.id = :paymentId" , Payment.class)
+                        " where p.id = :paymentId", Payment.class)
                 .setParameter("paymentId", paymentId)
-                .getSingleResult();
-    }}
+                .getResultList()));
+
+        return optionalPayment.isPresent() ? optionalPayment.get() : null;
+    }
+}
