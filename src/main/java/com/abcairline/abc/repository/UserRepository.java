@@ -22,16 +22,25 @@ public class UserRepository {
     }
 
     public User findOne(Long id) {
-        return em.find(User.class, id);
+        Optional<User> optionalUser = Optional.ofNullable(DataAccessUtils.uniqueResult(em.createQuery(
+                        "SELECT u FROM User u" +
+                                " join fetch u.reservations r" +
+                                " WHERE u.id = :userId", User.class)
+                .setParameter("userId", id)
+                .getResultList()));
+
+        return optionalUser.isPresent() ? optionalUser.get() : null;
     }
 
     public List<User> findAll() {
-        return em.createQuery("select u from User u", User.class).getResultList();
+        return em.createQuery("select u from User u join fetch u.reservations r", User.class).getResultList();
     }
 
     public List<UserCoupon> findUserCouponsForUser(Long userId) {
         return em.createQuery(
-                        "SELECT uc FROM UserCoupon uc WHERE uc.user.id = :userId", UserCoupon.class)
+                        "SELECT uc FROM UserCoupon uc " +
+                                " join fetch uc.coupon c" +
+                                " WHERE uc.user.id = :userId", UserCoupon.class)
                 .setParameter("userId", userId)
                 .getResultList();
     }
@@ -40,7 +49,7 @@ public class UserRepository {
         Optional<UserCoupon> optionalUserCoupon = Optional.ofNullable(DataAccessUtils.uniqueResult(
                 em.createQuery(
                         "SELECT uc FROM UserCoupon uc" +
-                                " join fetch uc.coupon c " +
+                                " join fetch uc.coupon c" +
                                 " WHERE uc.id = :userCouponId" , UserCoupon.class)
                 .setParameter("userCouponId", userCouponId)
                 .getResultList()));
