@@ -44,13 +44,7 @@ public class UserService {
     }
 
     public UserCoupon retrieveOneUserCoupon(Long userCouponId) {
-        UserCoupon userCoupon = userRepository.findUserOneCoupon(userCouponId);
-
-        if (userCoupon == null) {
-            System.out.println("Coupon is not exist");
-        }
-
-        return userCoupon;
+        return userRepository.findOneUserCoupon(userCouponId);
     }
 
     @Transactional

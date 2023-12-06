@@ -27,15 +27,12 @@ public class PayController {
     private final UserService userService;
     private final PayService payService;
 
-    @PostMapping("/")
+    @PostMapping("")
     @Operation(summary = "예약 결제", description = "결제 정보를 받아 예약 결제/확정")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true
             , description = "사용자 쿠폰과 결제 수단")
-    public ResponseEntity<Long> payForReservation(@PathVariable Long reservationId, @Valid @RequestBody PaymentRequest request) {
+    public ResponseEntity<Long> payForReservation(@PathVariable("reservationId") Long reservationId, @Valid @RequestBody PaymentRequest request) {
         Payment payment = new Payment();
-        if (request.getPaymentMethod() == null) {
-            throw new InvalidPaymentException();
-        }
         payment.setPaymentMethod(request.getPaymentMethod());
 
         payService.pay(payment, reservationId, request.getUserCouponId());
@@ -49,9 +46,9 @@ public class PayController {
 
     @GetMapping("/{paymentId}")
     @Operation(summary = "결제 정보", description = "완료된 결제에 대한 정보")
-    public PaymentDto getPaymentInfo(@PathVariable Long paymentId) {
+    public PaymentDto getPaymentInfo(@PathVariable("paymentId") Long paymentId) {
         Payment payment = payService.retrieveOnePayment(paymentId);
 
-        return new PaymentDto(payment);
+        return payment != null ? new PaymentDto(payment) : null ;
     }
 }

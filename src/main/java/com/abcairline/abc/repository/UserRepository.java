@@ -36,12 +36,18 @@ public class UserRepository {
                 .getResultList();
     }
 
-    public UserCoupon findUserOneCoupon(Long userCouponId) {
-        {
-            return em.find(UserCoupon.class, userCouponId);
-        }
+    public UserCoupon findOneUserCoupon(Long userCouponId) {
+        Optional<UserCoupon> optionalUserCoupon = Optional.ofNullable(DataAccessUtils.uniqueResult(
+                em.createQuery(
+                        "SELECT uc FROM UserCoupon uc" +
+                                " join fetch uc.coupon c " +
+                                " WHERE uc.id = :userCouponId" , UserCoupon.class)
+                .setParameter("userCouponId", userCouponId)
+                .getResultList()));
 
+        return optionalUserCoupon.isPresent() ? optionalUserCoupon.get() : null;
     }
+
 
     public User findOneWithProviderAndProviderId(String provider, String providerId) {
         Optional<User> optionalUser = Optional.ofNullable(DataAccessUtils.uniqueResult(em.createQuery(

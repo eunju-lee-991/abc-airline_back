@@ -4,6 +4,7 @@ import com.abcairline.abc.domain.Payment;
 import com.abcairline.abc.domain.Reservation;
 import com.abcairline.abc.domain.UserCoupon;
 import com.abcairline.abc.domain.enumeration.ReservationStatus;
+import com.abcairline.abc.exception.InvalidPaymentException;
 import com.abcairline.abc.exception.InvalidReservationStateException;
 import com.abcairline.abc.exception.NotExistReservationException;
 import com.abcairline.abc.repository.PayRepository;
@@ -41,8 +42,10 @@ public class PayService {
                     payment.setUserCoupon(userCoupon);
                     payment.setDiscountPrice(userCoupon.getCoupon().getDiscountPrice());
                 } else {
-                    log.warn("already used coupon");
+                    throw new InvalidPaymentException("This coupon is already used");
                 }
+            } else {
+                throw new InvalidPaymentException("This coupon ID is not valid");
             }
         }
 
@@ -50,7 +53,6 @@ public class PayService {
         payment.setReservation(reservation);
 
         payRepository.save(payment);
-
     }
 
     public Payment retrieveOnePayment(Long paymentId) {
