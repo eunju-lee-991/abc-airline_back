@@ -11,7 +11,6 @@ public class NotExistReservationException extends RuntimeException {
     public NotExistReservationException(String message) {
         super(message);
     }
-
     public NotExistReservationException(String message, Throwable cause) {
         super(message, cause);
     }
