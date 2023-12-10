@@ -20,7 +20,7 @@ public class UserService {
     public User retrieveOneUser(Long id) {
         User user = userRepository.findOne(id);
         if (user == null) {
-            throw new NotExistUserException();
+            throw new NotExistUserException("This user does not exits.");
         }
         return user;
     }
@@ -34,11 +34,7 @@ public class UserService {
     }
 
     public List<UserCoupon> retrieveUserCoupons(Long userId) {
-        User user = retrieveOneUser(userId);
-
-        if (user == null) {
-            throw new NotExistUserException();
-        }
+        retrieveOneUser(userId);
 
         return userRepository.findUserCouponsForUser(userId);
     }

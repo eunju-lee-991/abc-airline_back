@@ -62,7 +62,7 @@ public class ReservationService {
     public Reservation retrieveReservationWithAllInformation(Long reservationId) {
         Reservation findOne = reservationRepository.findOneWithAllInformation(reservationId);
         if (findOne == null) {
-            throw new NotExistReservationException("존재하지 않는 예약 번호입니다.");
+            throw new NotExistReservationException("The reservation number does not exist.");
         }
         return findOne;
     }
@@ -100,8 +100,7 @@ public class ReservationService {
             }
             findOne.updateSeat(seat);
         } else {
-            log.info("You cannot update your reservation in this status");
-            throw new InvalidReservationStateException();
+            throw new InvalidReservationStateException("You cannot update your reservation in this status");
         }
     }
 
@@ -129,8 +128,7 @@ public class ReservationService {
         if (findOne.getStatus() == ReservationStatus.PENDING) {
             findOne.setStatus(ReservationStatus.CONFIRMED);
         } else {
-            throw new InvalidReservationStateException("You cannot update your reservation status. check if your status is already confirmed or canceled");
+            throw new InvalidReservationStateException("You cannot confirm your reservation. Check if your status is already confirmed or canceled");
         }
-
     }
 }

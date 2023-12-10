@@ -72,7 +72,6 @@ public class LoginController {
 
         JWToken token = jwtService.createToken(user);
         response.addHeader(JwtConstants.HEADER_AUTHORIZATION, JwtConstants.TOKEN_PREFIX + token.getAccessToken());
-
         return new SimpleUserDto(user);
     }
 }

@@ -30,7 +30,8 @@ public class PayService {
         }
 
         if (reservation.getStatus() != ReservationStatus.PENDING) {
-            throw new InvalidReservationStateException("Your reservation status is not pending.");
+//            throw new InvalidReservationStateException("Your reservation status is not pending.");
+            log.info("pendingpendingpendingpendingYour reservation status is not pending.");
         }
         payment.setOriginalReservationPrice(reservation.getReservationPrice());
 
@@ -53,6 +54,10 @@ public class PayService {
         payment.setReservation(reservation);
 
         payRepository.save(payment);
+
+        if (payment.getId() != null) {
+            reservationService.confirmReservation(reservationId);
+        }
     }
 
     public Payment retrieveOnePayment(Long paymentId) {

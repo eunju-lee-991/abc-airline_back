@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,15 +32,11 @@ public class PayController {
     @Operation(summary = "예약 결제", description = "결제 정보를 받아 예약 결제/확정")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true
             , description = "사용자 쿠폰과 결제 수단")
-    public ResponseEntity<Long> payForReservation(@PathVariable("reservationId") Long reservationId, @Valid @RequestBody PaymentRequest request) {
+    public ResponseEntity<Long> payForReservation( @PathVariable("reservationId") Long reservationId, @Valid @RequestBody PaymentRequest request) {
         Payment payment = new Payment();
         payment.setPaymentMethod(request.getPaymentMethod());
 
         payService.pay(payment, reservationId, request.getUserCouponId());
-
-        if (payment.getId() != null) {
-            reservationService.confirmReservation(reservationId);
-        }
 
         return new ResponseEntity<>(payment.getId(), HttpStatus.CREATED);
     }
